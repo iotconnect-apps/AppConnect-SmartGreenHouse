@@ -1,0 +1,148 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net46;net40</TargetFrameworks>
+    <Version>1.0.0</Version>
+    <Authors>iot.solution.dataacess</Authors>
+    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+    <Language>en-US</Language>
+    <AssemblyName>iot.solution.dataacess</AssemblyName>
+    <AssemblyTitle>Westwind.Utilities</AssemblyTitle>
+    <NeutralLanguage>en-US</NeutralLanguage>    
+    <PackageId>iot.solution.dataacess</PackageId>
+    <RootNamespace>iot.solution.dataacess</RootNamespace>
+    <Title>West Wind Utilities</Title>
+    <Description></Description>    
+    <Summary>Small library of general purpose utilities for .NET development that almost every application can use. Used as a core reference library for other West Wind libraries.</Summary>
+    <PackageCopyright>Rick Strahl, West Wind Technologies 2007-2018</PackageCopyright>
+    <PackageTags></PackageTags>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageIconUrl></PackageIconUrl>
+    <PackageProjectUrl></PackageProjectUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Copyright></Copyright>
+    <RepositoryType></RepositoryType>
+    <Company>iot.solution.dataacess</Company>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    
+    <RepositoryUrl></RepositoryUrl>
+    
+    <Product>iot.solution.dataacess</Product>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DefineConstants>TRACE;DEBUG;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <NoWarn>$(NoWarn);CS1591;CS1572;CS1573</NoWarn>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>false</IncludeSymbols>
+    <DefineConstants>RELEASE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="InternetTools\**" />
+    <Compile Remove="Logging\**" />
+    <Compile Remove="SupportClasses\**" />
+    <Compile Remove="Utilities\ExensionMethods\**" />
+    <EmbeddedResource Remove="InternetTools\**" />
+    <EmbeddedResource Remove="Logging\**" />
+    <EmbeddedResource Remove="SupportClasses\**" />
+    <EmbeddedResource Remove="Utilities\ExensionMethods\**" />
+    <None Remove="InternetTools\**" />
+    <None Remove="Logging\**" />
+    <None Remove="SupportClasses\**" />
+    <None Remove="Utilities\ExensionMethods\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Configuration\Providers\ConfigurationFileConfigurationProvider.cs" />
+    <Compile Remove="Utilities\DebugUtils.cs" />
+    <Compile Remove="Utilities\FileUtils.cs" />
+    <Compile Remove="Utilities\GenericUtils.cs" />
+    <Compile Remove="Utilities\HtmlUtils.cs" />
+    <Compile Remove="Utilities\HttpUtils.cs" />
+    <Compile Remove="Utilities\HttpUtilsWebClient.cs" />
+    <Compile Remove="Utilities\ImageUtils.cs" />
+    <Compile Remove="Utilities\LanguageUtils.cs" />
+    <Compile Remove="Utilities\NetworkUtils.cs" />
+    <Compile Remove="Utilities\SecurityUtils.cs" />
+    <Compile Remove="Utilities\ShellUtils.cs" />
+    <Compile Remove="Utilities\TimeUtils.cs" />
+    <Compile Remove="Utilities\WindowsUtils.cs" />
+    <Compile Remove="Utilities\XmlUtils.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove=".gitignore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="SupportClasses\DelegateFactory.cs" />
+    <Compile Include="SupportClasses\Encryption.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+    <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
+  </PropertyGroup>
+
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net46'">
+    <DefineConstants>NET45;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net40'">
+    <DefineConstants>NET40;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+</Project>

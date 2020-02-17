@@ -1,0 +1,88 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+    <AspNetCoreModuleName>AspNetCoreModule</AspNetCoreModuleName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp3.0\iot.solution.host.xml</DocumentationFile>
+    <OutputPath>bin\Debug\netcoreapp3.0\</OutputPath>
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Extension\IServiceCollectionExtension.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="chartdata\EnergyUsage.txt" />
+    <None Remove="chartdata\SoilNutritions.txt" />
+    <None Remove="chartdata\WaterUsage.txt" />
+    <None Remove="iot.solution.host.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\component.common.model\component.common.model.csproj" />
+    <ProjectReference Include="..\..\component.cors\component.cors.csproj" />
+    <ProjectReference Include="..\..\component.errorhandler\component.errorhandler.csproj" />
+    <ProjectReference Include="..\..\component.exception\component.exception.csproj" />
+    <ProjectReference Include="..\..\component.helper\component.helper.csproj" />
+    <ProjectReference Include="..\..\component.logger\component.logger.csproj" />
+    <ProjectReference Include="..\..\component.messaging\component.messaging.csproj" />
+    <ProjectReference Include="..\..\component.swagger\component.swagger.csproj" />
+    <ProjectReference Include="..\iot.solution.entity\iot.solution.entity.csproj" />
+    <ProjectReference Include="..\iot.solution.service\iot.solution.service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="chartdata\EnergyUsage.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="chartdata\SoilNutritions.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="chartdata\WaterUsage.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iot.solution.host.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="web.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extension\" />
+    <Folder Include="wwwroot\CropImages\" />
+    <Folder Include="wwwroot\GreenhouseImages\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="IoTConnect.EntityProvider">
+      <HintPath>..\..\Lib\IoTConnect.EntityProvider.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

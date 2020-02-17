@@ -1,0 +1,134 @@
+<!-- Content Header (Page header) -->
+
+<section class="content-header">
+		<h1>{{moduleName}}</h1>
+</section>
+<!-- Main content -->
+
+<section class="content">
+	<mat-card class="support-card">
+     <div class="row">
+		<div class="col col-ld-11">
+		<form [formGroup]="deviceForm" (ngSubmit)="addDevice()" autocomplete="off" class="form-horizontal common-form">
+			<div class="row">
+				<div class="col-md-6">
+					<fieldset class="form-group form-field">
+						<label class="form-label">Unique ID<b>*</b></label>
+						<mat-form-field>
+							<input matInput name="uniqueId" formControlName="uniqueId" type="text" [(ngModel)]="deviceObject['uniqueId']" [attr.disabled]="isEdit ? '' : null"
+								class="form-control" required tabindex="1" placeholder="Unique ID">
+							<div class="form-control-feedback" *ngIf="deviceForm.controls['uniqueId'].errors">
+								<p class="form-tooltip-error sm " [ngClass]="{'error':true}"
+									*ngIf="deviceForm.controls['uniqueId'].errors.required && checkSubmitStatus">
+									Please enter unique ID
+								</p>
+							</div>
+						</mat-form-field>
+					</fieldset>
+				</div>
+				<div class="col-md-6">
+					<fieldset class="form-group form-field">
+						<label class="form-label">Name<b>*</b></label>
+						<mat-form-field>
+							<input matInput name="name" formControlName="name" type="text" [(ngModel)]="deviceObject['name']"
+								class="form-control" tabindex="2" placeholder="Name">
+							<div class="form-control-feedback" *ngIf="deviceForm.controls['name'].errors">
+								<p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+									*ngIf="deviceForm.controls['name'].errors.required && checkSubmitStatus">
+									Please enter device name
+								</p>
+							</div>
+						</mat-form-field>
+					</fieldset>
+				</div>
+			</div>
+			<!-- <div class="row">
+				<div class="col-md-6 col-xs-12">
+					<fieldset class="form-group form-field">
+						<label class="form-label" for="description">Photo</label>
+						<button mat-icon-button>
+								<mat-icon class="info-icon"
+								  matTooltip="Support: .png, .jpg, .jpeg "
+								  aria-label="" matTooltipPosition="after">
+								  <img src="../../../../assets/images/info-icon.svg" width="24" alt="">
+								</mat-icon>
+							  </button>
+						<div>
+								<label for="myFile" class="upload-file m-r-15"
+								  >
+								  <input type="file" class="m-r-20" id="myFile" name="myFile" formControlName="image"
+									(change)="handleImageInput($event)" accept=".jpg, .jpeg, .png" #floor_image_Ref/>
+								</label>
+
+								<ul class="d-inline-block image-list m-t-0">
+										<li class="h-auto" *ngIf="fileUrl">
+										  <div class="user-profle-image">
+											<img [src]="fileUrl" *ngIf="fileUrl"/>
+										  </div>
+										  <span>
+											<i class="material-icons"
+											  (click)="removeFile('image')">clear</i>
+										  </span>
+										</li>
+				
+								</ul>
+								
+								<div class="form-control-feedback"
+									*ngIf="deviceForm.controls['image'].errors">
+									<p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+										*ngIf="deviceForm.controls['image'].errors.required && checkSubmitStatus">
+										Please select photo
+									</p>
+								</div>
+						</div>
+					</fieldset>
+					
+				</div>
+			</div> -->
+			<div class="row">
+				<div class="col-md-6">
+					<fieldset class="form-group form-field">
+						<label class="form-label">Tag <b>*</b></label>
+						<mat-form-field>
+							<mat-select placeholder="Select Tag" formControlName="parentDeviceGuid"  [(ngModel)]="deviceObject['parentDeviceGuid']" tabindex="3">
+							  <mat-option *ngFor="let deviceGateway of gatewayList" [value]="deviceGateway?.value" >
+								{{deviceGateway.text}}
+							  </mat-option>
+							</mat-select>
+							<div class="form-control-feedback" *ngIf="deviceForm.controls['parentDeviceGuid'].errors">
+								<p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+									*ngIf="deviceForm.controls['parentDeviceGuid'].errors.required && checkSubmitStatus">
+									Please select a tag
+								</p>
+						</div>
+					</mat-form-field>
+					</fieldset>
+				</div>
+				<div class="col-md-6">
+					<fieldset class="form-group form-field">
+						<label class="form-label">Notes</label>
+						<mat-form-field>
+						<textarea matInput rows="3" class="form-control" formControlName="note" placeholder="Notes" name="note" [(ngModel)]="deviceObject['note']"
+							tabindex="4"></textarea>
+						</mat-form-field>
+					</fieldset>
+				</div>				
+			</div>
+			
+			<div class="row mt-4 mb-0">
+					<div class="col-lg-12">
+					  <div class="form-field">
+						<div class="input-field ">
+						  <button mat-flat-button color="primary" 
+							class="text-white " title="Submit" type="submit">Submit</button>
+						  <button mat-flat-button color="primary" class="text-white m-l-10" [routerLink]="['/devices']"
+							title="Cancel">Cancel</button>
+						</div>
+					  </div>
+					</div>
+			</div>
+		</form>
+		</div>
+	  </div>
+	</mat-card>
+</section>

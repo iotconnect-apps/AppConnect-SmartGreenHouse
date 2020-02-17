@@ -1,0 +1,226 @@
+<section class="content-header">
+	<h1>Dashboard</h1>
+	<div class="content-header-action">
+
+	</div>
+</section>
+
+<div class="main-page dashboard">
+	<div class="row dashboardtop-widget">
+		<div class="col">
+			<div class="dashboard-chart bgbluewidget text-center">
+				<h4>{{totalGreenhouse}}</h4>
+				<p>Total Greenhouses</p>
+			</div>
+		</div>
+		<div class="col">
+			<div class="dashboard-chart bggreenlwidget text-center">
+				<h4>{{totalCorp}}</h4>
+				<p>Total Crops</p>
+			</div>
+		</div>
+		<div class="col">
+			<div class="dashboard-chart bgpinkwidget text-center">
+				<h4>12</h4>
+				<p>Total Alerts</p>
+			</div>
+		</div>
+		<div class="col">
+			<div class="dashboard-chart bgyellowwidget text-center">
+				<h4>{{totalConnectedDevices}}</h4>
+				<p>Connected Devices</p>
+			</div>
+		</div>
+		<div class="col">
+			<div class="dashboard-chart bgorangewidget text-center">
+				<h4>{{totalDisconnectedDevices}}</h4>
+				<p>Disconnected Devices</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="row mt-4">
+		<div class="col-md-12 col-lg-8">
+			<div class="drag-body dashboard-widget">
+				<mat-card class="dashboard-card mat-card">
+					<agm-map [latitude]="lat" [longitude]="lng">
+						<agm-marker *ngFor="let loc of greenhouse " [latitude]="loc.latitude" [longitude]="loc.longitude" [iconUrl]="{ url: '../../../../assets/images/greenhouse-location-icon.svg'}"></agm-marker>
+					</agm-map>
+				</mat-card>
+			</div>
+		</div>
+		<div class="col-md-12 col-lg-4 mt-md-4 mt-lg-0">
+			<div class="drag-body dashboard-widget">
+				<div class="panel-heading">
+					<h5 class="panel-title"> Alerts </h5>
+				</div>
+				<mat-card class="dashboard-card mat-card">
+					<ul class="alerts-dashboard">
+						<li class="alert-high">
+							<span class="alerts-date">Today, 10:30 AM</span>
+							<span class="alerts-info">Temperature level exceeded the limit (85<sup>o</sup>F)</span>
+						</li>
+						<li class="alert-high">
+							<span class="alerts-date">Today, 08:24 AM</span>
+							<span class="alerts-info">Humidity level exceeded the limit (85%)</span>
+						</li>
+						<li class="alert-medium">
+							<span class="alerts-date">2 days ago</span>
+							<span class="alerts-info">Fan101 turned off</span>
+						</li>
+						<li class="alert-normal">
+							<span class="alerts-date">2 days ago</span>
+							<span class="alerts-info">Temperature level exceeded the limit (85<sup>o</sup>F)</span>
+						</li>
+						<li class="alert-high">
+							<span class="alerts-date">4 days ago</span>
+							<span class="alerts-info">Temperature level exceeded the limit (85<sup>o</sup>F)</span>
+						</li>
+						<li class="alert-medium">
+							<span class="alerts-date">1 week ago</span>
+							<span class="alerts-info">Humidity level exceeded the limit (75%)</span>
+						</li>
+						<li class="alert-normal">
+							<span class="alerts-date">1 week ago</span>
+							<span class="alerts-info">Temperature level exceeded the limit (90<sup>o</sup>F)</span>
+						</li>
+					</ul>
+				</mat-card>
+			</div>
+		</div>
+	</div>
+
+	<div class="row mt-4">
+		<div class="col-md-12 col-lg-6">
+			<div class="drag-body dashboard-widget">
+				<div class="panel-heading">
+					<h5 class="panel-title"> Farms </h5>
+					<ul class="filter-for-chart">
+						<li>
+							<button [disableRipple]="true" mat-icon-button>
+								<mat-icon>more_horiz</mat-icon>
+							</button>
+						</li>
+					</ul>
+				</div>
+				<mat-card class="dashboard-card mat-card">
+					<div class="text-right">
+						<mat-form-field>
+							<mat-label>Choose Farms</mat-label>
+							<mat-select (selectionChange)="getgreenHouse($event.value)">
+								<mat-option *ngFor="let green of greenhouse" [value]="green?.guid">{{green.name}}</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+					<div class="farmdetails">
+						<div class="farmstatics farmenergy">
+							<span class="farmstatics-icon">
+								<img src="../../../assets/images/farm_icon_energy.png"
+										 alt="">
+							</span>
+							<span class="farmstatics-title">Energy Usages (kWh)</span>
+							<span class="farmstatics-number">{{energyUsage}}</span>
+						</div>
+						<div class="farmstatics farmtemperature">
+							<span class="farmstatics-icon">
+								<img src="../../../assets/images/farm_icon_temp.png"
+										 alt="">
+							</span>
+							<span class="farmstatics-title">Temperature</span>
+							<span class="farmstatics-number" *ngIf="temperature">{{temperature}}<sup>0</sup>F</span>
+						</div>
+						<div class="farmstatics farmmoisture">
+							<span class="farmstatics-icon">
+								<img src="../../../assets/images/farm_icon_moisture.png"
+										 alt="">
+							</span>
+							<span class="farmstatics-title">Moisture</span>
+							<span class="farmstatics-number" *ngIf="moisture">{{moisture}}%</span>
+						</div>
+						<div class="farmstatics farmhumidity">
+							<span class="farmstatics-icon">
+								<img src="../../../assets/images/farm_icon_humidity.png"
+										 alt="">
+							</span>
+							<span class="farmstatics-title">Humidity</span>
+							<span class="farmstatics-number" *ngIf="humidity">{{humidity}}%</span>
+						</div>
+						<div class="farmstatics farmwater">
+							<span class="farmstatics-icon">
+								<img src="../../../assets/images/farm_icon_water.png"
+										 alt="">
+							</span>
+							<span class="farmstatics-title">Water Usages (gal)</span>
+							<span class="farmstatics-number">{{waterUsage}}</span>
+						</div>
+						<div class="farmstatics farmdevices">
+							<span class="farmstatics-icon">
+								<img src="../../../assets/images/farm_icon_device.png"
+										 alt="">
+							</span>
+							<span class="farmstatics-title">Total Devices</span>
+							<span class="farmstatics-number">{{totalDevices}}</span>
+						</div>
+					</div>
+
+				</mat-card>
+			</div>
+		</div>
+		<div class="col-md-12 col-lg-6">
+			<div class="drag-body dashboard-widget">
+				<div class="panel-heading">
+					<h5 class="panel-title"> Soil Nutritions </h5>
+					<ul class="filter-for-chart">
+						<li>
+							<button [disableRipple]="true" mat-icon-button>
+								<mat-icon>more_horiz</mat-icon>
+							</button>
+						</li>
+					</ul>
+				</div>
+				<mat-card class="dashboard-card mat-card">
+					<div class="soil-nutritions">
+						<img src="../../../assets/images/graph-01.jpg" alt="Soil Nutritions">
+					</div>
+				</mat-card>
+			</div>
+		</div>
+	</div>
+
+	<div class="row mt-4">
+		<div class="col-md-12 col-lg-6">
+			<div class="drag-body dashboard-widget">
+				<div class="panel-heading">
+					<h5 class="panel-title"> Energy Consumption </h5>
+					<ul class="filter-for-chart">
+						<li>
+							<button [disableRipple]="true" mat-icon-button>
+								<mat-icon>more_horiz</mat-icon>
+							</button>
+						</li>
+					</ul>
+				</div>
+				<mat-card class="dashboard-card mat-card">
+					<img src="../../../assets/images/graph-02.jpg" alt="Energy Consumption">
+				</mat-card>
+			</div>
+		</div>
+		<div class="col-md-12 col-lg-6">
+			<div class="drag-body dashboard-widget">
+				<div class="panel-heading">
+					<h5 class="panel-title"> Water Consumption </h5>
+					<ul class="filter-for-chart">
+						<li>
+							<button [disableRipple]="true" mat-icon-button>
+								<mat-icon>more_horiz</mat-icon>
+							</button>
+						</li>
+					</ul>
+				</div>
+				<mat-card class="dashboard-card mat-card">
+					<img src="../../../assets/images/graph-03.jpg" alt="Water Consumption">
+				</mat-card>
+			</div>
+		</div>
+	</div>
+</div>

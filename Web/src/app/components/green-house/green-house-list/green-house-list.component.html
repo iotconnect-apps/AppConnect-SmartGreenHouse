@@ -1,0 +1,93 @@
+<section class="content-header">
+  <h1>{{moduleName}}</h1>
+  <div class="content-header-action">
+    <div class="instance-status-details m-r-20">
+      <div class="instance-status-box d-flex flex-wrap align-items-center">
+        <div class="col">
+          <div class="instance-status-info">
+            <span class="user-status-type status-green">Active</span>
+          </div>
+        </div>
+        <div class="col">
+          <div class="instance-status-info">
+            <span class="user-status-type status-red">Inactive</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <app-search-render [searchValue]="searchParameters.searchText" (searchEvent)="searchTextCallback($event)">
+      </app-search-render>
+    </div>
+    <div class="p-l-20">
+      <button type="button" [routerLink]="['/green-house/add']" mat-flat-button color="primary"
+              class="text-white" title="Add Device">
+        Add GreenHouse
+      </button>
+    </div>
+
+  </div>
+</section>
+<div class="content p-t-0">
+  <div class="user-grid-wrapper custom-height-grid-box ng-star-inserted">
+    <div class="row">
+
+      <div *ngFor="let greenhouse of greenHouseList" class="col-lg-4 col-ld-3 m-b-30 ng-star-inserted">
+        <div class="user-grid-box">
+          <div (click)="activeInactivegreenhouse(greenhouse.guid, true, greenhouse.name)"
+               *ngIf="greenhouse['isactive']" class="user-status-indicator status-green"></div>
+          <div (click)="activeInactivegreenhouse(greenhouse.guid, false, greenhouse.name)"
+               *ngIf="!greenhouse['isactive']" class="user-status-indicator status-red"></div>
+          <div class="grid-inner-flex d-flex align-items-center pb-3">
+            <div class="user-image-box">
+              <img alt="" class="img-fluid ng-star-inserted"
+                   src="{{greenhouse['image'] == '00000000-0000-0000-0000-000000000000' || greenhouse['image'] == null ? _appConstant.noImg:_appConstant.imgUrl + greenhouse['image']}}">
+            </div>
+            <div class="user-detail-box">
+              <h3 class="user-name">
+                <a [routerLink]="['/green-house-details',greenhouse['guid']]">{{greenhouse['name'] }}</a>
+              </h3>
+              <div class="greenhouse-location">
+                <div class="d-flex align-items-start">
+                  <div class="mt-1"><i class="material-icons">location_on</i></div>
+                  <div class="ml-2">
+                    <p class="greenhouse-address border-0 pb-0">
+                      {{greenhouse['address']}} {{address2}}<br />
+                      {{greenhouse['city']}}, {{(greenhouse['zipcode'])?greenhouse['zipcode']:'NA'}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="greenhouse-cd-detail d-flex flex-wrap">
+            <div class="greenhouse-cd-cta d-flex flex-wrap align-items-center justify-content-center">
+              <span><img src="../../../../assets/images/crop-icon.svg"></span>
+              <p class="mb-0 ml-2 ">Total Crop: <strong class="green">{{greenhouse.cropCount}}</strong> </p>
+            </div>
+            <div class="greenhouse-cd-cta d-flex flex-wrap align-items-center justify-content-center">
+              <span><img src="../../../../assets/images/kit-icon.svg"></span>
+              <p class="mb-0 ml-2 ">Total Kit : <strong class="green">{{greenhouse.kitCount}}</strong> </p>
+            </div>
+          </div>
+          <div class="user-actions d-flex flex-wrap">
+            <div class="user-actions-cta text-center ng-star-inserted">
+              <a class="green" [routerLink]="['/green-house/',greenhouse['guid']]">
+                <img alt="Edit" src="../../../assets/images/icon-edit.svg">
+              </a>
+            </div>
+            <div class="user-actions-cta text-center">
+              <a href="javascript:;" data-toggle="modal" data-target="#deviceDeleteModal"
+                 (click)="deleteModel(greenhouse)" title="Delete">
+                <img alt="View" src="../../../assets/images/icon-delete.svg">
+              </a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-confirm-dialog [dialogId]="'spaceStatusModal'" [status]="changeStatusDeviceStatus" [msgType]="0"
+                    [moduleName]="changeStatusDeviceName" (onSave)="changeDeviceStatus()"></app-confirm-dialog>

@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+	<RuntimeFrameworkVersion>2.1.0</RuntimeFrameworkVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Flurl.Http" Version="2.4.2" />
+    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
+    <PackageReference Include="IoTConnect.Common" Version="2.0.2" />
+    <PackageReference Include="IoTConnect.DeviceProvider" Version="2.0.2" />
+    <PackageReference Include="IoTConnect.EntityProvider" Version="2.0.2" />
+    <PackageReference Include="IoTConnect.RuleProvider" Version="1.0.0" />
+    <PackageReference Include="IoTConnect.TemplateProvider" Version="1.0.0" />
+    <PackageReference Include="IoTConnect.UserProvider" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>    
+    <ProjectReference Include="..\component.caching\component.caching.csproj" />
+    <ProjectReference Include="..\component.common.model\component.common.model.csproj" />
+    <ProjectReference Include="..\component.logger\component.logger.csproj" />
+    <ProjectReference Include="..\component.discoveryclient\component.discoveryclient.csproj" />
+    <ProjectReference Include="..\component.exception\component.exception.csproj" />
+    <ProjectReference Include="..\service.solution\iot.solution.entity\iot.solution.entity.csproj" />
+  </ItemGroup>
+
+</Project>

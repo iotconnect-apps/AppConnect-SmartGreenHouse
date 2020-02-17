@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AssemblyName>iot.solution.service</AssemblyName>
+    <PackageId>iot.solution.service</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Implementation\RoleEngine.cs" />
+    <Compile Remove="Implementation\UserEngine.cs" />
+    <Compile Remove="Interface\IRoleEngine.cs" />
+    <Compile Remove="Interface\IUserEngine.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.0" />
+    <PackageReference Include="NetCore.AutoRegisterDi" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\component.logger\component.logger.csproj" />
+    <ProjectReference Include="..\iot.solution.entity\iot.solution.entity.csproj" />
+    <ProjectReference Include="..\iot.solution.model\iot.solution.model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="IoTConnect.Common">
+      <HintPath>..\..\Lib\IoTConnect.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="IoTConnect.DeviceProvider">
+      <HintPath>..\..\Lib\IoTConnect.DeviceProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="IoTConnect.EntityProvider">
+      <HintPath>..\..\Lib\IoTConnect.EntityProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="IoTConnect.RuleProvider">
+      <HintPath>..\..\Lib\IoTConnect.RuleProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="IoTConnect.TemplateProvider">
+      <HintPath>..\..\Lib\IoTConnect.TemplateProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="IoTConnect.UserProvider">
+      <HintPath>..\..\Lib\IoTConnect.UserProvider.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

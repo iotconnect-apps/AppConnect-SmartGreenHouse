@@ -1,0 +1,77 @@
+<section class="content-header">
+    <h1>Notifications</h1>
+    <div class="content-header-action">
+        <div class="instance-status-details m-r-20">
+            <div class="instance-status-box d-flex flex-wrap align-items-center">
+                <div class="col">
+                    <div class="instance-status-info"><span class="user-status-type status-green">Active</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="instance-status-info"><span class="user-status-type status-red">Inactive</span>
+                    </div>
+                </div>
+                <!-- <div class="col">
+                        <div class="instance-status-info"><span class="user-status-type status-warn">Warning</span>
+                        </div>
+                    </div> -->
+            </div>
+        </div>
+        <div>
+            <app-search-render [searchValue]="searchText" (searchEvent)="searchTextCallback($event)">
+            </app-search-render>
+        </div>
+        <div class="p-l-20"><button type="button" [routerLink]="['/admin/notification/add']" mat-flat-button color="primary"
+			class="text-white" title="Add Device">Add Notifications</button></div> 
+    </div>
+</section>
+
+
+<div class="content p-t-0">
+    <div class="user-grid-wrapper custom-height-grid-box ng-star-inserted">
+        <div class="row">
+            <!---->
+            <div *ngFor="let notfication of notificationList" class="col-lg-4 col-ld-3 mb-3">
+                <div class="user-grid-box">
+
+                    <div *ngIf="notfication['isActive']" (click)="activeInactiveRule(notfication.guid, false, notfication.name)"
+                         class="user-status-indicator status-green"></div>
+
+                    <div  *ngIf="!notfication['isActive']" (click)="activeInactiveRule(notfication.guid, true, notfication.name)"
+                        class="user-status-indicator status-red"></div>
+
+                    <div class="grid-inner-flex d-flex align-items-center">
+                        <div class="user-detail-box">
+                            <h3 class="user-name"><a [routerLink]="['/admin/notification',notfication['guid']]" href="javascript:void();">{{notfication['name']}}</a></h3>
+                            <!-- <p class="user-details">Template : <span>{{notfication['name']}}</span></p> -->
+                            <!-- <p class="user-details">Entity :<span>{{notfication['name']}}</span></p> -->
+                            <p class="user-details">Rule Type : <span>{{notfication['ruleType']}}</span></p>
+                            <!-- <p class="user-details">User : <span>{{notfication['name']}}</span></p>
+                                <p class="user-details">Role : <span>{{notfication['name']}}</span></p> -->
+                        </div>
+                    </div>
+                    <div class="user-actions d-flex flex-wrap">
+                        <div class="user-actions-cta text-center ng-star-inserted">
+                            <a class="green" [routerLink]="['/admin/notification',notfication['guid']]">
+                                <img alt="Edit" src="../../../assets/images/icon-edit.svg">
+                            </a>
+                        </div>
+                        <div class="user-actions-cta text-center">
+                            <a href="javascript:;" data-toggle="modal" data-target="#deviceDeleteModal"
+                                (click)="deleteModel(notfication)" title="Delete">
+                                <img alt="View" src="../../../assets/images/icon-delete.svg">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div class="col-lg-4 col-ld-3 mb-3">
+                <div class="user-grid-box bigaddbutton">
+                    <a href="javascript:void();" [routerLink]="['/admin/notification/add']">
+                        <i class="material-icons">add</i>
+                    </a>
+                </div>
+            </div> -->
+        </div>
+    </div>

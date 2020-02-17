@@ -1,0 +1,33 @@
+@media(max-width: 1600px){
+  /* body.sidebar-collapse app-payout .mat-tab-body, body.sidebar-collapse app-invoice-list .mat-tab-body {max-width: calc(100vw - 115px);}
+  body:not(.sidebar-collapse) app-payout .mat-tab-body, body:not(.sidebar-collapse) app-invoice-list .mat-tab-body {max-width: calc(100vw - 325px);} */
+}
+@media(max-width: 1400px){
+  .card-information-item:not(:last-of-type){
+      margin-right: 25px;
+  }
+  .mat-horizontal-stepper-header-container{
+    max-width: 840px;
+  }
+  .support-ticket-container .col{
+    min-width: 350px;
+  }
+}
+@media(max-width: 1200px){
+  .light-card-body .days span, .table-container .days span, .response-time-body .days span{margin:2px;}
+  .create-role-card .permissions-box .permissions-row .permissions-title.permissions-column {flex: 0 0 33%;}
+  .permissions-box mat-checkbox {margin-right: 60px;}
+  /* body:not(.sidebar-collapse) app-payout .mat-tab-body, body:not(.sidebar-collapse) app-invoice-list .mat-tab-body {max-width: calc(100vw - 115px);} */
+  .filter-wrap .filter-form-field > ul > li {
+      flex: 1;
+  }
+  .alerts-dashboard {
+    height: inherit !important;
+    max-height: inherit !important;
+  }
+}
+@media (min-width: 992px){
+  .mt-ld-4{
+    margin-top: 1.9rem!important;
+}
+}

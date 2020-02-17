@@ -1,0 +1,183 @@
+<!-- Content Header (Page header) -->
+
+<section class="content-header">
+  <h1>{{moduleName}}</h1>
+</section>
+<!-- Main content -->
+
+<section class="content">
+  <mat-card class="support-card">
+    <div class="row">
+      <div class="col col-ld-11">
+        <form [formGroup]="userForm" (ngSubmit)="addUser()" autocomplete="off" class="form-horizontal common-form">
+          <div class="row">
+            <div class="col-md-6">
+              <fieldset class="form-group form-field">
+                <label class="form-label">First Name<b>*</b></label>
+                <mat-form-field>
+                  <input matInput name="firstName" formControlName="firstName" type="text" maxlength="50" [(ngModel)]="userObject['firstName']"
+                         class="form-control" required tabindex="1" placeholder="first name" maxlength="50">
+                  <div class="form-control-feedback" *ngIf="userForm.controls['firstName'].errors">
+                    <p class="form-tooltip-error sm " [ngClass]="{'error':true}"
+                       *ngIf="userForm.controls['firstName'].errors.required && checkSubmitStatus">
+                      Please enter Firstname
+                    </p>
+                  </div>
+                </mat-form-field>
+              </fieldset>
+            </div>
+            <div class="col-md-6">
+              <fieldset class="form-group form-field">
+                <label class="form-label">Last Name<b>*</b></label>
+                <mat-form-field>
+                  <input matInput name="lastName" formControlName="lastName" type="text" maxlength="50" [(ngModel)]="userObject['lastName']"
+                         class="form-control" required tabindex="2" placeholder="last name">
+                  <div class="form-control-feedback" *ngIf="userForm.controls['lastName'].errors">
+                    <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                       *ngIf="userForm.controls['lastName'].errors.required && checkSubmitStatus">
+                      Please enter lastname
+                    </p>
+                  </div>
+                </mat-form-field>
+              </fieldset>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <fieldset class="form-group form-field">
+                <label class="form-label">Email<b>*</b></label>
+                <mat-form-field>
+                  <input matInput name="email" formControlName="email" type="text" maxlength="50" [(ngModel)]="userObject['email']"
+                         class="form-control" required tabindex="3" placeholder="email" [attr.disabled]="isEdit ? '' : null">
+                  <div class="form-control-feedback" *ngIf="userForm.controls['email'].errors">
+                    <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                       *ngIf="userForm.controls['email'].errors.required && checkSubmitStatus">
+                      Please enter Email
+                    </p>
+                    <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                       *ngIf="userForm.controls['email'].errors.email">
+                      Email must be a valid email address
+                    </p>
+                  </div>
+                </mat-form-field>
+              </fieldset>
+            </div>
+            <div class="col-md-6">
+              <fieldset class="form-group form-field">
+                <label class="form-label">Role<b>*</b></label>
+                <mat-form-field>
+                  <mat-select placeholder="Select Role" formControlName="roleGuid" [(ngModel)]="userObject['roleGuid']" tabindex="4">
+                    <mat-option *ngFor="let role of roleList" [value]="role.guid">
+                      {{role.name}}
+                    </mat-option>
+                  </mat-select>
+                  <div class="form-control-feedback" *ngIf="userForm.controls['roleGuid'].errors">
+                    <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                       *ngIf="userForm.controls['roleGuid'].errors.required && checkSubmitStatus">
+                      Please select Role
+                    </p>
+                  </div>
+                </mat-form-field>
+              </fieldset>
+            </div>
+          </div>
+          <div class="row">
+            <!--<div class="col-md-6">
+          <fieldset class="form-group form-field">
+              <label class="form-label">Green House:<b>*</b></label>
+              <mat-form-field>
+                      <mat-select  placeholder="Select GreenHouse"  formControlName="entityGuid" [(ngModel)]="userObject['greenhouseGuid']"  tabindex="5" >
+                          <mat-option *ngFor="let entity of enitityList" [value]="entity.value | lowercase">
+                              {{entity.text}}
+                           </mat-option>
+                      </mat-select>
+                      <div class="form-control-feedback" *ngIf="userForm.controls['entityGuid'].errors">
+                          <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                              *ngIf="userForm.controls['entityGuid'].errors.required && checkSubmitStatus">
+                              Please select Green House
+                          </p>
+                  </div>
+              </mat-form-field>
+          </fieldset>
+  </div>-->
+
+            <div class="col-md-6">
+              <fieldset class="form-group form-field">
+                <label class="form-label">Time Zone<b>*</b></label>
+                <mat-form-field>
+                  <mat-select placeholder="Select Timezone" formControlName="timeZoneGuid" [(ngModel)]="userObject['timezoneGuid']" tabindex="6">
+                    <mat-option *ngFor="let time of timezoneList" [value]="getdata(time.value)">
+                      {{time.text}}
+                    </mat-option>
+                  </mat-select>
+                  <div class="form-control-feedback" *ngIf="userForm.controls['timeZoneGuid'].errors">
+                    <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                       *ngIf="userForm.controls['timeZoneGuid'].errors.required && checkSubmitStatus">
+                      Please select Time Zone
+                    </p>
+                  </div>
+                </mat-form-field>
+              </fieldset>
+            </div>
+            <div class="col-md-6">
+              <fieldset class="form-group form-field">
+                <label class="form-label">Contact No<b>*</b></label>
+                <mat-form-field>
+                  <input matInput name="contactNo" [textMask]="mask" formControlName="contactNo" type="text" maxlength="50" [(ngModel)]="userObject['contactNo']"
+                         class="form-control" required tabindex="7" placeholder="91-1234567890">
+                  <div class="form-control-feedback" *ngIf="userForm.controls['contactNo'].errors">
+                    <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                       *ngIf="userForm.controls['contactNo'].errors.required && checkSubmitStatus">
+                      Please enter contact no
+                    </p>
+                    <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                       *ngIf="userForm.controls['contactNo'].errors.pattern && checkSubmitStatus">
+                      Please enter valid contact no
+                    </p>
+                  </div>
+                </mat-form-field>
+              </fieldset>
+            </div>
+          </div>
+          <div class="row">
+            
+            <div class="col-md-6">
+              <fieldset class="form-group form-field">
+                <label class="form-label">Status<b>*</b></label>
+                <mat-form-field>
+                  <mat-select formControlName="isActive" [(ngModel)]="userObject['isActive']" tabindex="8">
+                    <mat-option *ngFor="let status of arrystatus" [value]="status.value">
+                      {{status.name}}
+                    </mat-option>
+                  </mat-select>
+                  <div class="form-control-feedback" *ngIf="userForm.controls['isActive'].errors">
+                    <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                       *ngIf="userForm.controls['isActive'].errors.required && checkSubmitStatus">
+                      Please select status
+                    </p>
+                  </div>
+                </mat-form-field>
+              </fieldset>
+            </div>
+          </div>
+          <div class="row mt-4 mb-0">
+            <div class="col-lg-12">
+              <div class="form-field">
+                <div class="input-field ">
+                  <button mat-flat-button color="primary"
+                          class="text-white " title="Submit" type="submit">
+                    {{buttonname}}
+                  </button>
+                  <button mat-flat-button color="primary" class="text-white m-l-10" [routerLink]="['/users']"
+                          title="Cancel">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </mat-card>
+</section>
