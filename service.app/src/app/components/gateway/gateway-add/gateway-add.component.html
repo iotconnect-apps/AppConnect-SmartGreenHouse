@@ -1,0 +1,129 @@
+<!-- Content Header (Page header) -->
+
+<section class="content-header">
+  <h1>{{moduleName}}</h1>
+</section>
+<!-- Main content -->
+
+<section class="content">
+  <mat-card class="support-card">
+    <div class="row">
+      <div class="col col-ld-11">
+
+        <form [formGroup]="gatewayForm" (ngSubmit)="addgateway()" autocomplete="off"
+          class="form-horizontal common-form">
+          <div class="row">
+            <div class="col-md-6">
+              <fieldset class="form-group form-field">
+                <label class="form-label">Green House <b>*</b></label>
+                <mat-form-field>
+                  
+                  <mat-select formControlName="greenHouseGuid" tabindex="4" placeholder="Select Green House"
+                    name="greenHouseGuid" [disabled]="isNext">
+                    <!-- <mat-option value="">Please select Green House</mat-option> -->
+                    <mat-option *ngFor="let greenhouse of greenhouseList" [value]="greenhouse?.value">
+                      {{greenhouse.text}}
+                    </mat-option>
+                  </mat-select>
+                  <div class="form-control-feedback" *ngIf="gatewayForm.controls['greenHouseGuid'].errors">
+                    <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                      *ngIf="gatewayForm.controls['greenHouseGuid'].errors.required && checkSubmitStatus">
+                      Please select Green House
+                    </p>
+                  </div>
+                </mat-form-field>
+              </fieldset>
+            </div>
+            <div class="col-md-6">
+              <fieldset class="form-group form-field">
+                <label class="form-label">Kit Code<b>*</b></label>
+                <mat-form-field>
+                  <input matInput name="kitCode" maxlength="50" formControlName="kitCode" type="text"
+                    class="form-control" tabindex="1" placeholder="Enter a kit Code" [readonly]="isNext">
+                  <div class="form-control-feedback" *ngIf="gatewayForm.controls['kitCode'].errors">
+                    <p class="form-tooltip-error sm " [ngClass]="{'error':true}"
+                      *ngIf="gatewayForm.controls['kitCode'].errors.required && checkSubmitStatus">
+                      Please enter Kit Code
+                    </p>
+                    <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                      *ngIf="gatewayForm.controls['kitCode'].errors.pattern && checkSubmitStatus">
+                      Please enter valid Kit Code
+                    </p>
+                  </div>
+                </mat-form-field>
+              </fieldset>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div [formGroup]="angForm">
+                <div formArrayName="names">
+                  <div *ngFor="let name of names.controls; index as idx">
+                    <mat-form-field>
+                      <input matInput [formControlName]="idx" placeholder="Enter a Parent Device" class="form-control"
+                        (keyup)="angForm.get('names').controls[idx].valid">
+                      <div class="form-control-feedback" *ngIf="angForm.get('names').controls[idx].invalid">
+                        <p class="form-tooltip-error sm " [ngClass]="{'error':true}"
+                          *ngIf="angForm.get('names').controls[idx].invalid && checkSubmitStatus">
+                          Please enter Parent Device
+                        </p>
+                      </div>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!--<div class="col-md-6" *ngFor="let person of numbers; let i = index">
+              <fieldset class="form-group form-field">
+                <mat-form-field>
+                  <input matInput name="Parent Device" formControlName="parentDevice" type="text"
+                         class="form-control" required tabindex="1" placeholder="Parent Device">
+                  <div class="form-control-feedback" *ngIf="gatewayForm.controls['kitCode'].errors">
+                    <p class="form-tooltip-error sm " [ngClass]="{'error':true}"
+                       *ngIf="gatewayForm.controls['kitCode'].errors.required && checkSubmitStatus">
+                      Please enter parent device
+                    </p>
+                  </div>
+                </mat-form-field>
+              </fieldset>
+            </div>-->
+          </div>
+          <div class="row mb-0" *ngIf="!isNext">
+            <div class="col-lg-12">
+              <div class="form-field">
+                <div class="input-field ">
+                  <button mat-flat-button color="primary" class="text-white" *ngIf="!isNext"
+                    (click)="isNext=true;getGatewayCount(gatewayForm.controls['kitCode'].value);" title="Next">
+                    Next
+                  </button>
+                  <button mat-flat-button color="primary" *ngIf="!isNext" class="text-white m-l-10"
+                    [routerLink]="['/gateways']" title="Cancel">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-0" *ngIf="isNext">
+            <div class="col-lg-12">
+              <div class="form-field">
+                <div class="input-field ">
+                  <button mat-flat-button color="primary" *ngIf="isNext" class="text-white " title="Submit"
+                    type="submit">
+                    Submit
+                  </button>
+                  <button mat-flat-button color="primary" *ngIf="isNext" class="text-white m-l-10"
+                    [routerLink]="['/gateways/add']" (click)="refresh();" title="Cancel">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </mat-card>
+</section>

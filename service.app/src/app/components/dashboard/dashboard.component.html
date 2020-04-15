@@ -1,0 +1,231 @@
+<section class="content-header">
+	<h1>Dashboard</h1>
+	<div class="content-header-action">
+
+	</div>
+</section>
+
+<div class="main-page dashboard">
+	<div class="row dashboardtop-widget">
+		<div class="col">
+			<div class="dashboard-chart bgbluewidget text-center">
+				<h4>{{totalGreenhouse}}</h4>
+				<p>Total Greenhouses</p>
+			</div>
+		</div>
+		<div class="col">
+			<div class="dashboard-chart bggreenlwidget text-center">
+				<h4>{{totalCorp}}</h4>
+				<p>Total Crops</p>
+			</div>
+		</div>
+		<div class="col">
+			<div class="dashboard-chart bgpinkwidget text-center">
+				<h4>{{totalAlerts}}</h4>
+				<p>Total Alerts</p>
+			</div>
+		</div>
+		<div class="col">
+			<div class="dashboard-chart bgyellowwidget text-center">
+				<h4>{{totalConnectedDevices}}</h4>
+				<p>Connected Devices</p>
+			</div>
+		</div>
+		<div class="col">
+			<div class="dashboard-chart bgorangewidget text-center">
+				<h4>{{totalDisconnectedDevices}}</h4>
+				<p>Disconnected Devices</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="row mt-4">
+		<div class="col-md-12 col-lg-8">
+			<div class="drag-body dashboard-widget">
+				<mat-card class="dashboard-card mat-card">
+					<agm-map [latitude]="lat" [longitude]="lng">
+						<agm-marker *ngFor="let loc of greenhouse " [latitude]="loc.latitude ? loc.latitude : lat"
+							[longitude]="loc.longitude ? loc.longitude : lng"
+							[iconUrl]="{ url: '../../../../assets/images/greenhouse-location-icon.svg'}">
+							<agm-info-window [disableAutoPan]="false" [isOpen]="true" #infoWindow>
+								<strong>{{loc.name}}</strong><br>
+							</agm-info-window>
+						</agm-marker>
+
+					</agm-map>
+				</mat-card>
+
+			</div>
+		</div>
+		<div class="col-md-12 col-lg-4 mt-md-4 mt-lg-0">
+			<div class="drag-body dashboard-widget">
+				<div class="panel-heading">
+					<h5 class="panel-title"> Alerts </h5>
+					<div class="tab-link-bar">
+						<a [routerLink]="['/alerts']" href="javascript:;">View All</a>
+					</div>
+				</div>
+				<mat-card class="dashboard-card mat-card min-h-480">
+					<ul *ngIf="alerts.length>0" class="alerts-dashboard">
+						<li class="alert-{{alert['severity']}}" *ngFor="let alert of alerts">
+							<span class="alerts-date">{{alert['eventDate'] | date:'M/d/yy, h:mm:ss a'}}</span>
+							<span class="alerts-info">{{alert.message}}</span>
+						</li>
+					</ul>
+					<div *ngIf="alerts.length==0" class="centerclass">No records found</div>
+
+				</mat-card>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="row mt-4">
+		<div class="col-md-12 col-lg-6">
+			<div class="drag-body dashboard-widget">
+				<div class="panel-heading">
+					<h5 class="panel-title"> Farms </h5>
+					<ul class="filter-for-chart">
+						<li>
+							<button [disableRipple]="true" mat-icon-button>
+								<mat-icon>more_horiz</mat-icon>
+							</button>
+						</li>
+					</ul>
+				</div>
+				<mat-card class="dashboard-card mat-card">
+					<div *ngIf="greenhouse.length>0" class="text-right">
+						<mat-form-field>
+							<mat-label>Choose Farms</mat-label>
+							<mat-select [ngModel]="selectedGreenhouseId"
+								(selectionChange)="getgreenHouse($event.value)">
+								<mat-option *ngFor="let green of greenhouse" [value]="green?.guid">{{green.name}}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+					<div *ngIf="greenhouse.length>0" class="farmdetails">
+						<div class="farmstatics farmenergy">
+							<span class="farmstatics-icon"><img src="../../../assets/images/farm_icon_energy.png"
+									alt=""></span>
+							<span class="farmstatics-title">Energy Usages (kWh)</span>
+							<span class="farmstatics-number">{{energyUsage}}</span>
+						</div>
+						<div class="farmstatics farmtemperature">
+							<span class="farmstatics-icon"><img src="../../../assets/images/farm_icon_temp.png"
+									alt=""></span>
+							<span class="farmstatics-title">Temperature</span>
+							<span class="farmstatics-number" *ngIf="temperature">{{temperature}}<sup>0</sup>F</span>
+						</div>
+						<div class="farmstatics farmmoisture">
+							<span class="farmstatics-icon"><img src="../../../assets/images/farm_icon_moisture.png"
+									alt=""></span>
+							<span class="farmstatics-title">Moisture</span>
+							<span class="farmstatics-number" *ngIf="moisture">{{moisture}}%</span>
+						</div>
+						<div class="farmstatics farmhumidity">
+							<span class="farmstatics-icon"><img src="../../../assets/images/farm_icon_humidity.png"
+									alt=""></span>
+							<span class="farmstatics-title">Humidity</span>
+							<span class="farmstatics-number" *ngIf="humidity">{{humidity}}%</span>
+						</div>
+						<div class="farmstatics farmwater">
+							<span class="farmstatics-icon"><img src="../../../assets/images/farm_icon_water.png"
+									alt=""></span>
+							<span class="farmstatics-title">Water Usages (gal)</span>
+							<span class="farmstatics-number">{{waterUsage}}</span>
+						</div>
+						<div class="farmstatics farmdevices">
+							<span class="farmstatics-icon"><img src="../../../assets/images/farm_icon_device.png"
+									alt=""></span>
+							<span class="farmstatics-title">Total Devices</span>
+							<span class="farmstatics-number">{{totalDevices}}</span>
+						</div>
+					</div>
+
+					<!-- <div *ngIf="greenhouse.length==0" class="centerclass">No farms found</div> -->
+					<div *ngIf="greenhouse.length==0"
+						class="text-center d-flex align-items-center justify-content-center" style="height: 350px;">
+						No farms found
+					</div>
+				</mat-card>
+
+
+			</div>
+		</div>
+		<div class="col-md-12 col-lg-6">
+			<div class="drag-body dashboard-widget">
+				<div class="panel-heading">
+					<h5 class="panel-title"> Soil Nutritions </h5>
+					<ul class="filter-for-chart">
+						<li>
+							<button [disableRipple]="true" mat-icon-button>
+								<mat-icon>more_horiz</mat-icon>
+							</button>
+						</li>
+					</ul>
+				</div>
+				<mat-card class="dashboard-card mat-card">
+					<div class="">
+						<!-- <img src="../../../assets/images/graph-01.jpg" alt="Soil Nutritions"> -->
+						<google-chart *ngIf="chart['soilNutritions']['dataTable'].length" #cchart
+							[data]="chart['soilNutritions']"></google-chart>
+						<div *ngIf="!chart['soilNutritions']['dataTable'].length"
+							class="text-center d-flex align-items-center justify-content-center" style="height: 350px;">
+							No data found
+						</div>
+					</div>
+				</mat-card>
+			</div>
+		</div>
+	</div>
+
+	<div class="row mt-4">
+		<div class="col-md-12 col-lg-6">
+			<div class="drag-body dashboard-widget">
+				<div class="panel-heading">
+					<h5 class="panel-title"> Energy Consumption </h5>
+					<ul class="filter-for-chart">
+						<li>
+							<button [disableRipple]="true" mat-icon-button>
+								<mat-icon>more_horiz</mat-icon>
+							</button>
+						</li>
+					</ul>
+				</div>
+				<mat-card class="dashboard-card mat-card">
+					<!-- <img src="../../../assets/images/graph-02.jpg" alt="Energy Consumption"> -->
+					<google-chart *ngIf="chart['energyConsumption']['dataTable'].length" #cchart
+						[data]="chart['energyConsumption']"></google-chart>
+					<div *ngIf="!chart['energyConsumption']['dataTable'].length"
+						class="text-center d-flex align-items-center justify-content-center" style="height: 300px;">
+						No data found
+					</div>
+				</mat-card>
+			</div>
+		</div>
+		<div class="col-md-12 col-lg-6">
+			<div class="drag-body dashboard-widget">
+				<div class="panel-heading">
+					<h5 class="panel-title"> Water Consumption </h5>
+					<ul class="filter-for-chart">
+						<li>
+							<button [disableRipple]="true" mat-icon-button>
+								<mat-icon>more_horiz</mat-icon>
+							</button>
+						</li>
+					</ul>
+				</div>
+				<mat-card class="dashboard-card mat-card">
+					<!-- <img src="../../../assets/images/graph-03.jpg" alt="Water Consumption"> -->
+					<google-chart *ngIf="chart['waterConsumption']['dataTable'].length" #cchart
+						[data]="chart['waterConsumption']"></google-chart>
+					<div *ngIf="!chart['waterConsumption']['dataTable'].length"
+						class="text-center d-flex align-items-center justify-content-center" style="height: 300px;">
+						No data found
+					</div>
+				</mat-card>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,9 @@
+{
+    "env": {
+        "name": "qa"
+    },
+    "apiServer": {
+        "baseUrl": "http://40.113.196.248:402/"
+    }
+}
+

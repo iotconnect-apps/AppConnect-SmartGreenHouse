@@ -1,0 +1,120 @@
+<!-- Content Header (Page header) -->
+
+<section class="content-header">
+  <h1>{{moduleName}}</h1>
+</section>
+<!-- Main content -->
+
+<section class="content">
+  <mat-card class="support-card">
+    <div class="row">
+      <div class="col col-ld-11">
+        <form [formGroup]="gatewayForm" (ngSubmit)="addgateway()" autocomplete="off" class="form-horizontal common-form">
+          <div class="row">
+            <div class="col-md-6">
+              <fieldset class="form-group form-field">
+                <label class="form-label">Unique ID<b>*</b></label>
+                <mat-form-field>
+                  <input matInput name="uniqueId" formControlName="uniqueId" type="text" [(ngModel)]="gatewayObject['uniqueId']" [attr.disabled]="isEdit ? '' : null"
+                         class="form-control" required tabindex="1" placeholder="Unique ID">
+                  <div class="form-control-feedback" *ngIf="gatewayForm.controls['uniqueId'].errors">
+                    <p class="form-tooltip-error sm " [ngClass]="{'error':true}"
+                       *ngIf="gatewayForm.controls['uniqueId'].errors.required && checkSubmitStatus">
+                      Please enter unique ID
+                    </p>
+                  </div>
+                </mat-form-field>
+              </fieldset>
+            </div>
+            <div class="col-md-6">
+              <fieldset class="form-group form-field">
+                <label class="form-label">Name<b>*</b></label>
+                <mat-form-field>
+                  <input matInput name="name" formControlName="name" type="text" [(ngModel)]="gatewayObject['name']"
+                         class="form-control" tabindex="2" placeholder="Name">
+                  <div class="form-control-feedback" *ngIf="gatewayForm.controls['name'].errors">
+                    <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                       *ngIf="gatewayForm.controls['name'].errors.required && checkSubmitStatus">
+                      Please enter name
+                    </p>
+                  </div>
+                </mat-form-field>
+
+              </fieldset>
+            </div>
+          </div>
+          <div class="row">
+
+            <div class="col-md-6">
+              <fieldset class="form-group form-field">
+                <label class="form-label">Device Type <b>*</b></label>
+                <mat-form-field>
+                  <mat-select formControlName="templateGuid" tabindex="3" placeholder="Select Template" name="templateGuid" [(ngModel)]="gatewayObject['templateGuid']">
+                    <mat-option *ngFor="let gatewayTemplate of templateList" [value]="gatewayTemplate?.value">
+                      {{gatewayTemplate.text}}
+                    </mat-option>
+                  </mat-select>
+                  <div class="form-control-feedback" *ngIf="gatewayForm.controls['templateGuid'].errors">
+                    <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                       *ngIf="gatewayForm.controls['templateGuid'].errors.required && checkSubmitStatus">
+                      Please select device type
+                    </p>
+                  </div>
+                </mat-form-field>
+              </fieldset>
+            </div>
+
+            <div class="col-md-6">
+              <fieldset class="form-group form-field">
+                <label class="form-label">GreenHouse <b>*</b></label>
+                <mat-form-field>
+                  <mat-select formControlName="greenHouseGuid" tabindex="4" placeholder="Select GreenHouse" name="greenHouseGuid" [(ngModel)]="gatewayObject['greenHouseGuid']">
+                    <mat-option *ngFor="let greenhouse of greenhouseList" [value]="greenhouse?.value">
+                      {{greenhouse.text}}
+                    </mat-option>
+                  </mat-select>
+                  <div class="form-control-feedback" *ngIf="gatewayForm.controls['greenHouseGuid'].errors">
+                    <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                       *ngIf="gatewayForm.controls['greenHouseGuid'].errors.required && checkSubmitStatus">
+                      Please select greenhouse
+                    </p>
+                  </div>
+                </mat-form-field>
+              </fieldset>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-xs-12">
+              <fieldset class="form-group form-field">
+                <label class="form-label">Notes</label>
+                <mat-form-field>
+                  <textarea matInput rows="3" tabindex="5" class="form-control" formControlName="note"
+                            placeholder="Notes" name="note" [(ngModel)]="gatewayObject['note']"></textarea>
+                </mat-form-field>
+              </fieldset>
+            </div>
+          </div>
+
+
+          <div class="row mt-4 mb-0">
+            <div class="col-lg-12">
+              <div class="form-field">
+                <div class="input-field ">
+                  <button mat-flat-button color="primary"
+                          class="text-white " title="Submit" type="submit">
+                    Submit
+                  </button>
+                  <button mat-flat-button color="primary" class="text-white m-l-10" [routerLink]="['/gateways']"
+                          title="Cancel">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </mat-card>
+</section>

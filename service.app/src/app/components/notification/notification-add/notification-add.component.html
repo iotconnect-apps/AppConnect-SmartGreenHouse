@@ -1,0 +1,408 @@
+<section class="content-header">
+    <h1>{{title}}</h1>
+    <div class="content-header-action">
+    </div>
+</section>
+
+<div class="content p-t-0">
+    <form autocomplete="off" class="form-horizontal common-form" [formGroup]="postForm" (ngSubmit)="submitForm()">
+        <mat-card class="plan-card mb-3 mat-card">
+            <div class="row">
+                <div class="col col-ld-12">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <fieldset class="form-group form-field mb-0">
+                                <label class="form-label">Name<b>*</b></label>
+                                <mat-form-field>
+                                    <input class="form-control" [readonly]="isDisabled" formControlName="name" matInput
+                                        maxlength="60" placeholder="Rule Name">
+                                    <div class="form-control-feedback" *ngIf="postForm.controls['name'].errors">
+                                        <p class="form-tooltip-error sm " [ngClass]="{'error':true}"
+                                            *ngIf="postForm.controls['name'].errors.required && checkSubmitStatus">
+                                            Please enter name
+                                        </p>
+                                    </div>
+                                </mat-form-field>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-4">
+                            <fieldset class="form-group form-field mb-0">
+                                <label class="form-label">Kit Type<b>*</b></label>
+                                <mat-form-field>
+                                    <mat-label>Select Kit Type</mat-label>
+                                    <mat-select [disabled]="isDisabled" formControlName="templateGuid"
+                                        (selectionChange)="getTemplateAttributeLookup()">
+                                        <mat-option value="">Select Kit Type</mat-option>
+                                        <mat-option value="{{template['value']}}" *ngFor="let template of templateList">
+                                            {{template['text']}}</mat-option>
+                                    </mat-select>
+                                    <div class="form-control-feedback" *ngIf="postForm.controls['templateGuid'].errors">
+                                        <p class="form-tooltip-error sm " [ngClass]="{'error':true}"
+                                            *ngIf="postForm.controls['templateGuid'].errors.required && checkSubmitStatus">
+                                            Please select Kit Type
+                                        </p>
+                                    </div>
+                                </mat-form-field>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-4">
+                            <fieldset class="form-group form-field mb-0">
+                                <label class="form-label">Severity levels<b>*</b></label>
+                                <mat-form-field>
+                                    <mat-label>Select severity levels</mat-label>
+                                    <mat-select [disabled]="isDisabled" formControlName="severityLevelGuid">
+                                        <mat-option value="">Select severity levels</mat-option>
+                                        <mat-option value="{{severity['value']}}" *ngFor="let severity of severityList">
+                                            {{severity['text']}}</mat-option>
+                                    </mat-select>
+                                    <div class="form-control-feedback"
+                                        *ngIf="postForm.controls['severityLevelGuid'].errors">
+                                        <p class="form-tooltip-error sm " [ngClass]="{'error':true}"
+                                            *ngIf="postForm.controls['severityLevelGuid'].errors.required && checkSubmitStatus">
+                                            Please select severity
+                                        </p>
+                                    </div>
+                                </mat-form-field>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <fieldset class="form-group form-field">
+                                <label class="form-label d-block">Type:<b>*</b></label>
+                                <mat-radio-group [disabled]="isDisabled" formControlName="ruleType" (change)="ruleTypeChange()"
+                                    aria-label="Select an option">
+                                    <mat-radio-button value="1" [checked]="(ruleType === '1') ? true:false">Standard
+                                    </mat-radio-button>
+                                    <mat-radio-button value="2" [checked]="(ruleType === '2') ? true:false">Smart
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="row" [ngClass]="(ruleType === '1')? '':'hide'">
+                        <div class="col-md-4">
+                            <fieldset class="form-group form-field mb-0">
+                                <label class="form-label">Attribute<b>*</b></label>
+                                <mat-form-field>
+                                    <mat-label>Select Attribute</mat-label>
+                                    <mat-select [disabled]="isDisabled" (selectionChange)="onType('attributeGuid')"
+                                        formControlName="attributeGuid">
+                                        <mat-option value="">Select Attribute</mat-option>
+                                        <mat-option [value]="attribute" *ngFor="let attribute of attributeList">
+                                            {{attribute['localName']}}({{attribute['tag']}})</mat-option>
+
+                                    </mat-select>
+                                    <div class="form-control-feedback"
+                                        *ngIf="attributeGuidValidationMsg && checkSubmitStatus">
+                                        <p class="form-tooltip-error sm " [ngClass]="{'error':true}">
+                                            Please select attribute
+                                        </p>
+                                    </div>
+                                </mat-form-field>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-4">
+                            <fieldset class="form-group form-field mb-0">
+                                <label class="form-label">Condition<b>*</b></label>
+                                <mat-form-field>
+                                    <mat-label>Select Condition</mat-label>
+                                    <mat-select [disabled]="isDisabled" formControlName="conditionText">
+                                        <mat-option value="">Select condtion</mat-option>
+                                        <mat-option value="{{condition['value']}}"
+                                            *ngFor="let condition of conditionList">
+                                            {{condition['text']}}</mat-option>
+                                    </mat-select>
+                                    <div class="form-control-feedback"
+                                        *ngIf="postForm.controls['conditionText'].errors">
+                                        <p class="form-tooltip-error sm " [ngClass]="{'error':true}"
+                                            *ngIf="postForm.controls['conditionText'].errors.required && checkSubmitStatus">
+                                            Please select condition
+                                        </p>
+                                    </div>
+                                </mat-form-field>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-4">
+                            <fieldset class="form-group form-field mb-0">
+                                <label class="form-label">Value<b>*</b></label>
+                                <mat-form-field>
+                                    <input class="form-control" [readonly]="isDisabled" (keyup)="onType('conditionValue')" formControlName="conditionValue" matInput
+                                        placeholder="Value" value="">
+                                    <div class="form-control-feedback"
+                                        *ngIf="condtionValueValidationMsg && checkSubmitStatus">
+                                        <p class="form-tooltip-error sm " [ngClass]="{'error':true}">
+                                            Please enter value
+                                        </p>
+                                    </div>
+                                </mat-form-field>
+                            </fieldset>
+                        </div>
+                    </div>
+
+                    <div class="row" [ngClass]="(ruleType === '2')? '':'hide'">
+                        <div class="col-md-5">
+                            <fieldset class="form-group form-field mb-0">
+                                <label class="form-label">Conditions <div class="d-inline-block ml-1">
+                                        <button class="infobutton" matTooltip="Condition statement triggers Rule on telemetry data that meet specified criteria. Criteria are expressed in the form of predicates. &#13;
+                                        Eg.
+                                        1) Temperature &gt; 50 
+                                        2) Temperature &gt; 50 AND Humidity &lt; 20 
+                                        3) Temperature &gt; 50 AND ( Humidity &lt; 20 OR WaterLevel &gt; 10 )
+                                        4) Status = on">
+                                            <img src="../../../../../assets/images/info-icon.svg"
+                                                height="15px"></button>
+                                    </div></label>
+                                <mat-form-field>
+                                    <mat-label>Select Condition</mat-label>
+                                    <textarea formControlName="conditionText" placeholder="Select Condition" rows="8"
+                                        class="form-control" matInput></textarea>
+                                    <div class="form-control-feedback"
+                                        *ngIf="postForm.controls['conditionText'].errors">
+                                        <p class="form-tooltip-error sm " [ngClass]="{'error':true}"
+                                            *ngIf="postForm.controls['conditionText'].errors.required && checkSubmitStatus">
+                                            Please select condition
+                                        </p>
+                                    </div>
+                                </mat-form-field>
+                            </fieldset>
+                            <button type="button" (click)="verifyCondition()" mat-flat-button color="primary"
+                                class="text-white " title="Verify">Verify</button>
+                        </div>
+                        <div class="col-md-5">
+                            <fieldset class="form-group form-field mb-0">
+                                <label class="form-label">Select Attributes</label>
+                                <div class="group-box add-ruls-attributes h200">
+                                    <ul>
+                                        <li *ngFor="let attribute of attributeList"><a
+                                                (click)="clickAttribute(attribute['tag'],attribute['localName'])"
+                                                class="angle-button"><i class="fa fa-angle-left"
+                                                    aria-hidden="true"></i></a>{{attribute['tag']}}#{{attribute['localName']}}
+                                        </li>
+                                        <!-- <li><a class="angle-button"><i class="fa fa-angle-left" aria-hidden="true"></i></a>humidity#Humidity (STRING)</li> -->
+
+                                    </ul>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </mat-card>
+        <mat-card class="plan-card mb-3 mat-card">
+            <div class="row">
+                <div class="col col-ld-12">
+                    <h2 class="m-b-20">Notification Applies On</h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <fieldset class="form-group form-field mb-0">
+
+                                <mat-radio-group formControlName="applyTo" (change)="ruleApplyONChange()"
+                                    aria-label="Select an option">
+                                    <mat-radio-button *ngIf="applyTo === '1' || applyTo === '3'" value="1">All Kit of
+                                        Selected Green House
+                                    </mat-radio-button>
+                                    <mat-radio-button *ngIf="applyTo === '2'" value="2">All Kit of Selected Green House
+                                    </mat-radio-button>
+                                    <mat-radio-button value="3">Selected Kit
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-4" *ngIf="applyTo !== '3'">
+                            <fieldset class="form-group form-field mb-0">
+                                <mat-form-field>
+                                    <mat-label>Select Green House</mat-label>
+                                    <mat-select (selectionChange)="onType('entityGuid')" formControlName="entityGuid">
+                                        <mat-option value="">Select Green House</mat-option>
+                                        <mat-option value="{{entity['value']}}" *ngFor="let entity of entityList">
+                                            {{entity['text']}}{{(entity['parentEntityGuid'] === null)?' (All)':''}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <div class="form-control-feedback" *ngIf="entityValidationMsg && checkSubmitStatus">
+                                        <p class="form-tooltip-error sm " [ngClass]="{'error':true}">
+                                            {{entityValidationMsg}}
+                                        </p>
+                                    </div>
+                                </mat-form-field>
+                            </fieldset>
+                        </div>
+                        <!-- <div class="col-md-4" *ngIf="applyTo !== '3'">
+                            <fieldset class="form-group form-field mb-0">
+                                <mat-checkbox (change)="checkEntiy()" [checked]="(applyTo === '2') ? true:false">Include
+                                    Device of Child Green House</mat-checkbox>
+                            </fieldset>
+                        </div> -->
+                        <div class="col-md-4" *ngIf="applyTo === '3'">
+                            <fieldset class="form-group form-field mb-0">
+                                <mat-form-field>
+                                    <mat-label>Select Kit</mat-label>
+                                    <mat-select formControlName="devices" multiple>
+                                        <mat-option value="{{device['value']}}" *ngFor="let device of deviceList">
+                                            {{device['text']}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </fieldset>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </mat-card>
+        <mat-card class="plan-card mb-3 mat-card">
+            <div class="row">
+                <div class="col col-ld-12">
+                    <h2 class="m-b-20">Alert Type</h2>
+                    <div class="row">
+                        <div class="col-md-12 notification-type mb-4">
+                            <mat-checkbox
+                                *ngFor="let notification of postForm['controls']['notificationTypes']['controls']; let i=index;"
+                                [formControl]="notification"
+                                (change)="getSelectedNotification(notification, myNotification[i].name);">
+                                {{myNotification[i].name}}
+                            </mat-checkbox>
+                        </div>
+
+                        <div *ngIf="deviceCommandType" class="col-md-12">
+                            <mat-card class="plan-card mb-3 mat-card">
+                                <div class="row">
+                                    <div class="col col-ld-12">
+                                        <h2 class="m-b-20">Device Command Details</h2>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <fieldset class="form-group form-field mb-0">
+                                                    <label class="form-label">Select Command<b>*</b></label>
+                                                    <mat-form-field>
+                                                        <mat-label>Select Command</mat-label>
+                                                        <mat-select (selectionChange)="onType('commandText')"
+                                                            formControlName="commandText">
+                                                            <mat-option value="">Select Command</mat-option>
+
+                                                            <mat-option value="{{command['value']}}"
+                                                                *ngFor="let command of commandList">
+                                                                {{command['text']}}</mat-option>
+                                                        </mat-select>
+                                                        <div class="form-control-feedback"
+                                                            *ngIf="commandTextValidationMsg && checkSubmitStatus">
+                                                            <p class="form-tooltip-error sm "
+                                                                [ngClass]="{'error':true}">
+                                                                Please selected command
+                                                            </p>
+                                                        </div>
+                                                    </mat-form-field>
+                                                </fieldset>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <fieldset class="form-group form-field mb-0">
+                                                    <label class="form-label">Parameter Value:</label>
+                                                    <mat-form-field>
+                                                        <input (keyup)="onType('commandValue')"
+                                                            formControlName="commandValue" matInput
+                                                            placeholder="Parameter Value" value="">
+                                                        <div class="form-control-feedback"
+                                                            *ngIf="commandValueValidationMsg && checkSubmitStatus">
+                                                            <p class="form-tooltip-error sm "
+                                                                [ngClass]="{'error':true}">
+                                                                Please enter value
+                                                            </p>
+                                                        </div>
+                                                    </mat-form-field>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </mat-card>
+                        </div>
+
+                        <div [ngClass]="(urlType)?'':'hide'" class="col-md-12">
+                            <mat-card class="plan-card mb-3 mat-card">
+                                <div class="row">
+                                    <div class="col col-ld-12">
+                                        <h2 class="m-b-20">Webhook Details</h2>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <fieldset class="form-group form-field mb-0">
+                                                    <label class="form-label">Url:</label>
+                                                    <mat-form-field>
+                                                        <input (keyup)="onType('url')" formControlName="url" matInput
+                                                            placeholder="Parameter Value" value="">
+                                                        <div class="form-control-feedback"
+                                                            *ngIf="urlValidationMsg && checkSubmitStatus">
+                                                            <p class="form-tooltip-error sm "
+                                                                [ngClass]="{'error':true}">
+                                                                Please enter url
+                                                            </p>
+                                                        </div>
+                                                    </mat-form-field>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </mat-card>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="form-control-feedback" *ngIf="notificationTypeValidationMsg && checkSubmitStatus">
+                    <p class="form-tooltip-error sm " [ngClass]="{'error':true}">
+                        Please select atleast one alert type
+                    </p>
+                </div>
+            </div>
+        </mat-card>
+        <mat-card class="plan-card mb-3 mat-card">
+            <div class="row">
+                <div class="col col-ld-12">
+                    <h2 class="m-b-20">Audience</h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <fieldset class="form-group form-field mb-0">
+                                <label class="form-label">Select Roles</label>
+                                <mat-form-field>
+                                    <mat-label>Select Roles</mat-label>
+                                    <mat-select formControlName="roles" multiple>
+                                        <mat-option value="{{role['value']}}" *ngFor="let role of roleList">
+                                            {{role['text']}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-4">
+                            <fieldset class="form-group form-field mb-0">
+                                <label class="form-label">Select Users</label>
+                                <mat-form-field>
+                                    <mat-label>Select Users</mat-label>
+                                    <mat-select formControlName="users" multiple>
+                                        <mat-option value="{{user['value']}}" *ngFor="let user of userList">
+                                            {{user['text']}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </fieldset>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </mat-card>
+        <div class="row mt-2 mb-1">
+            <div class="col-lg-12">
+                <div class="form-field">
+                    <div class="input-field ">
+                        <button type="submit" mat-flat-button color="primary" class="text-white "
+                            title="Save">Save</button>
+                        <button mat-flat-button color="primary" class="text-white " title="Cancel"
+                            [routerLink]="['/notifications']">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>

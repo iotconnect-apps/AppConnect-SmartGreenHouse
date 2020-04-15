@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="b996ae54-583c-4dfd-9cd8-2fc4643d1ed3" ChangeDateTime="03/05/2020 12:08:27">
+    <Property Name="ElementName" Value="[dbo].[KitDevice].[tag]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[KitDevice]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="tagGuid" />
+  </Operation>
+</Operations>
