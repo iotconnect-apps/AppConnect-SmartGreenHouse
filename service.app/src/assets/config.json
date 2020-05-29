@@ -1,9 +1,9 @@
 {
     "env": {
-        "name": "" 	//IoTConnect Environment
+        "name": "" 	
     },
     "apiServer": {
-        "baseUrl": "" //Application URL.
+        "baseUrl": "" 
     }
 }
 
