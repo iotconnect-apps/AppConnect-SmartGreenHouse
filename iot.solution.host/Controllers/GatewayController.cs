@@ -1,4 +1,5 @@
-﻿using iot.solution.entity.Structs.Routes;
+﻿using host.iot.solution.Filter;
+using iot.solution.entity.Structs.Routes;
 using iot.solution.service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -37,12 +38,13 @@ namespace host.iot.solution.Controllers
 
         [HttpGet]
         [Route(GatewayRoute.Route.GetById, Name = GatewayRoute.Name.GetById)]
-        public Entity.BaseResponse<Entity.Device> Get(Guid id)
+        [EnsureGuidParameterAttribute("id", "Gateway")]
+        public Entity.BaseResponse<Entity.Device> Get(string id)
         {
             Entity.BaseResponse<Entity.Device> response = new Entity.BaseResponse<Entity.Device>(true);
             try
             {
-                response.Data = _service.Get(id);
+                response.Data = _service.Get(Guid.Parse(id));
             }
             catch (Exception ex)
             {
@@ -74,13 +76,14 @@ namespace host.iot.solution.Controllers
 
         [HttpPut]
         [Route(GatewayRoute.Route.Delete, Name = GatewayRoute.Name.Delete)]
-        public Entity.BaseResponse<bool> Delete(Guid id)
+        [EnsureGuidParameterAttribute("id", "Gateway")]
+        public Entity.BaseResponse<bool> Delete(string id)
 
         {
             Entity.BaseResponse<bool> response = new Entity.BaseResponse<bool>(true);
             try
             {
-                var status = _service.Delete(id);
+                var status = _service.Delete(Guid.Parse(id));
                 response.IsSuccess = status.Success;
                 response.Message = status.Message;
                 response.Data = status.Success;
@@ -140,12 +143,13 @@ namespace host.iot.solution.Controllers
 
         [HttpPost]
         [Route(GatewayRoute.Route.UpdateStatus, Name = GatewayRoute.Name.UpdateStatus)]
-        public Entity.BaseResponse<bool> UpdateStatus(Guid id, bool status)
+        [EnsureGuidParameterAttribute("id", "Gateway")]
+        public Entity.BaseResponse<bool> UpdateStatus(string id, bool status)
         {
             Entity.BaseResponse<bool> response = new Entity.BaseResponse<bool>(true);
             try
             {
-                Entity.ActionStatus result = _service.UpdateStatus(id, status);
+                Entity.ActionStatus result = _service.UpdateStatus(Guid.Parse(id), status);
                 response.IsSuccess = result.Success;
                 response.Message = result.Message;
                 response.Data = result.Success;

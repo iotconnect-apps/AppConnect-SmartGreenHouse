@@ -2,12 +2,12 @@
 {
     public class DeviceDetailResponse
     {
-        public int EnergyUsage { get; set; }
-        public int Temperature { get; set; }
-        public int Moisture { get; set; }
-        public int Humidity { get; set; }
-        public int WaterUsage { get; set; }
-        public int TotalDevices { get; set; }
+        public string TotalEnergyCount { get; set; }
+        public string AvgTemp { get; set; }
+        public string AvgMoisture { get; set; }
+        public string AvgHumidity { get; set; }
+        public string TotalWaterUsage { get; set; }
+        public string TotalDevice { get; set; }
     }
 
    

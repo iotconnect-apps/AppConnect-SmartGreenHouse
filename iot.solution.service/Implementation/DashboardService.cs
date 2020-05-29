@@ -44,17 +44,16 @@ namespace iot.solution.service.Implementation
         public Entity.DashboardOverviewResponse GetOverview()
         {
             List<Entity.DashboardOverviewResponse> listResult = new List<Entity.DashboardOverviewResponse>();
-            Entity.DashboardOverviewResponse result = new Entity.DashboardOverviewResponse();
+           Entity.DashboardOverviewResponse result = new Entity.DashboardOverviewResponse();
             try
             {
                 listResult = _dashboardrepository.GetStatistics();
                 if (listResult.Count > 0)
                 {
                     result = listResult[0];
+                    
                 }
-
                 var deviceResult = _deviceService.GetDeviceCounters();
-
                 if (deviceResult.IsSuccess && deviceResult.Data != null)
                 {
                     result.ConnectedDeviceCount = deviceResult.Data.connected;
@@ -65,8 +64,6 @@ namespace iot.solution.service.Implementation
                     result.ConnectedDeviceCount = 0;
                     result.DisconnectedDeviceCount = 0;
                 }
-
-
             }
             catch (Exception ex)
             {

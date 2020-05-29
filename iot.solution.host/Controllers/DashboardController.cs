@@ -1,4 +1,5 @@
-﻿using iot.solution.entity.Structs.Routes;
+﻿using host.iot.solution.Filter;
+using iot.solution.entity.Structs.Routes;
 using iot.solution.service.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,12 +28,13 @@ namespace host.iot.solution.Controllers
 
         [HttpGet]
         [Route(DashboardRoute.Route.GetFarms, Name = DashboardRoute.Name.GetFarms)]
-        public Entity.BaseResponse<List<Entity.LookupItem>> GetFarms(Guid companyId)
+        [EnsureGuidParameterAttribute("companyId", "Company")]
+        public Entity.BaseResponse<List<Entity.LookupItem>> GetFarms(string companyId)
         {
             Entity.BaseResponse<List<Entity.LookupItem>> response = new Entity.BaseResponse<List<Entity.LookupItem>>(true);
             try
             {
-                response.Data = _service.GetFarmsLookup(companyId);
+                response.Data = _service.GetFarmsLookup(Guid.Parse(companyId));
             }
             catch (Exception ex)
             {
@@ -45,23 +47,24 @@ namespace host.iot.solution.Controllers
         [Route(DashboardRoute.Route.GetOverview, Name = DashboardRoute.Name.GetOverview)]
         public Entity.BaseResponse<Entity.DashboardOverviewResponse> GetOverview()
         {
-            Entity.BaseResponse<Entity.DashboardOverviewResponse> response = new Entity.BaseResponse<Entity.DashboardOverviewResponse>(true);
+           Entity.BaseResponse<Entity.DashboardOverviewResponse> response = new Entity.BaseResponse<Entity.DashboardOverviewResponse>(true);
             try
             {
                 response.Data = _service.GetOverview();
             }
             catch (Exception ex)
             {
-                return new Entity.BaseResponse<Entity.DashboardOverviewResponse>(false, ex.Message);
+                return new Entity.BaseResponse<Entity.DashboardOverviewResponse>();
             }
             return response;
         }
 
         [HttpGet]
         [Route(DashboardRoute.Route.GetGreenHouseDetail, Name = DashboardRoute.Name.GetGreenHouseDetail)]
-        public Entity.BaseResponse<Response.GreenHouseDetailResponse> GetGreenHouseDetail(Guid greenhouseId)
+        [EnsureGuidParameterAttribute("greenhouseId","Greenhouse")]
+        public Entity.BaseResponse<Response.GreenHouseDetailResponse> GetGreenHouseDetail(string greenhouseId)
         {
-            if (greenhouseId == null || greenhouseId == Guid.Empty)
+            if (greenhouseId == null || greenhouseId == string.Empty)
             {
                 return new Entity.BaseResponse<Response.GreenHouseDetailResponse>(false, "Invalid Request");
             }
@@ -69,7 +72,7 @@ namespace host.iot.solution.Controllers
             Entity.BaseResponse<Response.GreenHouseDetailResponse> response = new Entity.BaseResponse<Response.GreenHouseDetailResponse>(true);
             try
             {
-                response.Data = _greenHouseService.GetGreenHouseDetail(greenhouseId);
+                response = _greenHouseService.GetGreenHouseDetail(Guid.Parse(greenhouseId));
             }
             catch (Exception ex)
             {
@@ -79,9 +82,10 @@ namespace host.iot.solution.Controllers
         }
         [HttpGet]
         [Route(DashboardRoute.Route.GetDeviceDetail, Name = DashboardRoute.Name.GetDeviceDetail)]
-        public Entity.BaseResponse<Response.DeviceDetailResponse> GetDeviceDetail(Guid deviceId)
+        [EnsureGuidParameterAttribute("deviceId", "Device")]
+        public Entity.BaseResponse<Response.DeviceDetailResponse> GetDeviceDetail(string deviceId)
         {
-            if (deviceId == null || deviceId == Guid.Empty)
+            if (deviceId == null || deviceId == string.Empty)
             {
                 return new Entity.BaseResponse<Response.DeviceDetailResponse>(false, "Invalid Request");
             }
@@ -89,7 +93,7 @@ namespace host.iot.solution.Controllers
             Entity.BaseResponse<Response.DeviceDetailResponse> response = new Entity.BaseResponse<Response.DeviceDetailResponse>(true);
             try
             {
-                response.Data = _deviceService.GetDeviceDetail(deviceId);
+                response = _deviceService.GetDeviceDetail(Guid.Parse(deviceId));
             }
             catch (Exception ex)
             {
@@ -99,9 +103,10 @@ namespace host.iot.solution.Controllers
         }
         [HttpGet]
         [Route(DashboardRoute.Route.GetGreenHouseCorp, Name = DashboardRoute.Name.GetGreenHouseCorp)]
-        public Entity.BaseResponse<List<Response.GreenHouseCropResponse>> GetGreenHouseCorps(Guid greenhouseId)
+        [EnsureGuidParameterAttribute("greenhouseId", "Greenhouse")]
+        public Entity.BaseResponse<List<Response.GreenHouseCropResponse>> GetGreenHouseCorps(string greenhouseId)
         {
-            if (greenhouseId == null || greenhouseId == Guid.Empty)
+            if (greenhouseId == null || greenhouseId == string.Empty)
             {
                 return new Entity.BaseResponse<List<Response.GreenHouseCropResponse>>(false, "Invalid Request");
             }
@@ -109,7 +114,7 @@ namespace host.iot.solution.Controllers
             Entity.BaseResponse<List<Response.GreenHouseCropResponse>> response = new Entity.BaseResponse<List<Response.GreenHouseCropResponse>>(true);
             try
             {
-                response.Data = _greenHouseService.GetGreenHouseCorps(greenhouseId);
+                response.Data = _greenHouseService.GetGreenHouseCorps(Guid.Parse(greenhouseId));
             }
             catch (Exception ex)
             {
@@ -120,9 +125,10 @@ namespace host.iot.solution.Controllers
 
         [HttpGet]
         [Route(DashboardRoute.Route.GetGreenHouseDevices, Name = DashboardRoute.Name.GetGreenHouseDevices)]
-        public Entity.BaseResponse<List<Response.GreenHouseDevicesResponse>> GetGreenHouseDevices(Guid greenhouseId)
+        [EnsureGuidParameterAttribute("greenhouseId", "Greenhouse")]
+        public Entity.BaseResponse<List<Response.GreenHouseDevicesResponse>> GetGreenHouseDevices(string greenhouseId)
         {
-            if (greenhouseId == null || greenhouseId == Guid.Empty)
+            if (greenhouseId == null || greenhouseId == string.Empty)
             {
                 return new Entity.BaseResponse<List<Response.GreenHouseDevicesResponse>>(false, "Invalid Request");
             }
@@ -130,7 +136,7 @@ namespace host.iot.solution.Controllers
             Entity.BaseResponse<List<Response.GreenHouseDevicesResponse>> response = new Entity.BaseResponse<List<Response.GreenHouseDevicesResponse>>(true);
             try
             {
-                response.Data = _deviceService.GetGreenHouseDevices(greenhouseId);
+                response.Data = _deviceService.GetGreenHouseDevices(Guid.Parse(greenhouseId));
             }
             catch (Exception ex)
             {
@@ -141,9 +147,10 @@ namespace host.iot.solution.Controllers
 
         [HttpGet]
         [Route(DashboardRoute.Route.GetGreenHouseChildDevices, Name = DashboardRoute.Name.GetGreenHouseChildDevices)]
-        public Entity.BaseResponse<List<Response.GreenHouseDevicesResponse>> GetGreenHouseChildDevices(Guid deviceId)
+        [EnsureGuidParameterAttribute("deviceId", "Device")]
+        public Entity.BaseResponse<List<Response.GreenHouseDevicesResponse>> GetGreenHouseChildDevices(string deviceId)
         {
-            if (deviceId == null || deviceId == Guid.Empty)
+            if (deviceId == null || deviceId == string.Empty)
             {
                 return new Entity.BaseResponse<List<Response.GreenHouseDevicesResponse>>(false, "Invalid Request");
             }
@@ -151,7 +158,7 @@ namespace host.iot.solution.Controllers
             Entity.BaseResponse<List<Response.GreenHouseDevicesResponse>> response = new Entity.BaseResponse<List<Response.GreenHouseDevicesResponse>>(true);
             try
             {
-                response.Data = _deviceService.GetGreenHouseChildDevices(deviceId);
+                response.Data = _deviceService.GetGreenHouseChildDevices(Guid.Parse(deviceId));
             }
             catch (Exception ex)
             {

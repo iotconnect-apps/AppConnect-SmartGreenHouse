@@ -1,4 +1,5 @@
-﻿using iot.solution.data;
+﻿using component.helper;
+using iot.solution.data;
 using iot.solution.entity;
 using iot.solution.model.Repository.Interface;
 using System;
@@ -10,7 +11,7 @@ using System.Reflection;
 using Entity = iot.solution.entity;
 using LogHandler = component.services.loghandler;
 using Model = iot.solution.model.Models;
-
+using Response = iot.solution.entity.Response;
 
 namespace iot.solution.model.Repository.Implementation
 {
@@ -21,6 +22,33 @@ namespace iot.solution.model.Repository.Implementation
         {
             _logger = logger;
             _uow = unitOfWork;
+        }
+        public Entity.BaseResponse<List<Response.GreenHouseDetailResponse>> GetStatistics(Guid greenhouseId)
+        {
+            Entity.BaseResponse<List<Response.GreenHouseDetailResponse>> result = new Entity.BaseResponse<List<Response.GreenHouseDetailResponse>>();
+            try
+            {
+                _logger.InfoLog(LogHandler.Constants.ACTION_ENTRY, null, "", "", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+                using (var sqlDataAccess = new SqlDataAccess(ConnectionString))
+                {
+                    List<DbParameter> parameters = sqlDataAccess.CreateParams(SolutionConfiguration.CurrentUserId, SolutionConfiguration.Version);
+                    parameters.Add(sqlDataAccess.CreateParameter("guid", greenhouseId, DbType.Guid, ParameterDirection.Input));
+                    parameters.Add(sqlDataAccess.CreateParameter("syncDate", DateTime.UtcNow, DbType.DateTime, ParameterDirection.Output));
+                    DbDataReader dbDataReader = sqlDataAccess.ExecuteReader(sqlDataAccess.CreateCommand("[GreenHouse_Statistics_Get]", CommandType.StoredProcedure, null), parameters.ToArray());
+                    
+                    result.Data = DataUtils.DataReaderToList<Response.GreenHouseDetailResponse>(dbDataReader, null);
+                    if (parameters.Where(p => p.ParameterName.Equals("syncDate")).FirstOrDefault() != null)
+                    {
+                        result.LastSyncDate = Convert.ToString(parameters.Where(p => p.ParameterName.Equals("syncDate")).FirstOrDefault().Value);
+                    }
+                }
+                _logger.InfoLog(LogHandler.Constants.ACTION_EXIT, null, "", "", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+            }
+            return result;
         }
         public List<Entity.LookupItem> GetLookup(Guid companyId)
         {

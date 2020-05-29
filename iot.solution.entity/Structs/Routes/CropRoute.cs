@@ -12,6 +12,7 @@ namespace iot.solution.entity.Structs.Routes
             public const string GetList = "crop.list";
             public const string GetById = "crop.getbyid";
             public const string Delete = "crop.deletecrop";
+            public const string DeleteImage = "crop.deletecropimage";
             public const string UpdateStatus = "crop.updatestatus";
             public const string BySearch = "crop.search";
             public const string GetCrops = "crop.getcrops";
@@ -26,6 +27,7 @@ namespace iot.solution.entity.Structs.Routes
             public const string GetById = "{id}";
             public const string GetCrops = "crops/{greenHouseId}";
             public const string Delete = "delete/{id}";
+            public const string DeleteImage = "deleteimage/{id}";
             public const string UpdateStatus = "updatestatus/{id}/{status}";
         }
     }

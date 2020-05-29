@@ -1,8 +1,8 @@
-﻿
-/*******************************************************************
+﻿/*******************************************************************
 DECLARE @count INT
      ,@output INT = 0
-	,@fieldName				nvarchar(255)	
+	,@fieldName				nvarchar(255)
+	,@syncDate	DATETIME
 EXEC [dbo].[Chart_SoilNutrition]	
 	-- @companyguid	= '415C8959-5BFC-4203-A493-F89458AE7736'
 	--@entityguid	= '415C8959-5BFC-4203-A493-F89458AE7736'
@@ -11,8 +11,9 @@ EXEC [dbo].[Chart_SoilNutrition]
 	,@version		= 'v1'              
 	,@output		= @output		OUTPUT
 	,@fieldname		= @fieldName	OUTPUT	
+	,@syncDate		= @syncDate		OUTPUT
 
-SELECT @output status, @fieldName fieldName
+SELECT @output status, @fieldName fieldName, @syncDate syncDate
 
 001	SGH-145 26-02-2020 [Nishit Khakhi]	Added Initial Version to represent Soil Nutrition 
 
@@ -25,6 +26,7 @@ CREATE PROCEDURE [dbo].[Chart_SoilNutrition]
 	,@version			nvarchar(10)              
 	,@output			SMALLINT			OUTPUT
 	,@fieldname			nvarchar(255)		OUTPUT
+	,@syncDate			DATETIME			OUTPUT
 	,@culture			nvarchar(10)		= 'en-Us'	
 	,@enabledebuginfo	CHAR(1)				= '0'
 )
@@ -49,16 +51,23 @@ BEGIN
     END                    
     
     BEGIN TRY     
+
+		IF OBJECT_ID ('tempdb..#result') IS NOT NULL BEGIN DROP TABLE #result END
+		CREATE TABLE #result ([DATE] DATETIME, [guid] UNIQUEIDENTIFIER, [N] DECIMAL(18,2), [K] DECIMAL(18,2), [P] DECIMAL(18,2))
+
 		DECLARE @startDate DATETIME, @endDate DATETIME
 		SET @startDate = GETUTCDATE()-7
 		SET @endDate = GETUTCDATE()
 		IF @guid IS NOT NULL
 		BEGIN
+			INSERT INTO #result
 			SELECT * FROM 
-			(	SELECT DATENAME(DW,[DATE]) AS 'Day',[deviceGuid],[attribute],SUM([latest]) 'Total'
-				FROM [dbo].[TelemetrySummary_Daywise]
-				WHERE ([date] BETWEEN @startDate AND @endDate) AND [deviceGuid] = @guid AND [attribute] IN ('N','K','P')
-				GROUP BY DATENAME(DW,[DATE]),[deviceGuid],[attribute]
+			(	SELECT [DATE] ,[deviceGuid] AS [guid],[attribute], AVG([avg]) 'Total'
+				FROM [dbo].[TelemetrySummary_Hourwise] T (NOLOCK)
+				INNER JOIN [dbo].[Device] KD (NOLOCK) ON T.[deviceGuid] = KD.[guid] AND KD.[isDeleted] = 0
+				INNER JOIN [dbo].[KitTypeAttribute] KA (NOLOCK) ON KA.[code] = T.[attribute] AND KA.[tag] = KD.[tag]
+				WHERE ([date] BETWEEN @startDate AND @endDate) AND ( KD.[guid] = @guid OR KD.[parentDeviceGuid] = @guid ) AND KA.[code] IN ('N','K','P')
+				GROUP BY [DATE],[deviceGuid],[attribute]
 			) A 
 			PIVOT(
 						SUM (Total) 
@@ -72,13 +81,14 @@ BEGIN
 		END
 		ELSE IF @entityguid IS NOT NULL
 		BEGIN
+			INSERT INTO #result
 			SELECT * FROM 
-			(	SELECT DATENAME(DW,[DATE]) AS 'Day',[deviceGuid],[attribute],SUM([latest]) 'Total'
-				FROM [dbo].[TelemetrySummary_Daywise] T (NOLOCK)
-				INNER JOIN [dbo].[KitDevice] KD (NOLOCK) ON T.[deviceGuid] = KD.[guid] AND KD.[isDeleted] = 0
-				INNER JOIN [dbo].[HardwareKit] H (NOLOCK) ON KD.[kitGuid] = H.[guid] AND H.[isDeleted] = 0
-				WHERE ([date] BETWEEN @startDate AND @endDate) AND H.[greenHouseGuid] = @entityguid AND [attribute] IN ('N','K','P')
-				GROUP BY DATENAME(DW,[DATE]),[deviceGuid],[attribute]
+			(	SELECT [DATE],KD.[greenHouseGuid] AS [guid],[attribute], AVG([avg]) 'Total'
+				FROM [dbo].[TelemetrySummary_Hourwise] T (NOLOCK)
+				INNER JOIN [dbo].[Device] KD (NOLOCK) ON T.[deviceGuid] = KD.[guid] AND KD.[isDeleted] = 0
+				INNER JOIN [dbo].[KitTypeAttribute] KA (NOLOCK) ON KA.[code] = T.[attribute] AND KA.[tag] = KD.[tag]
+				WHERE ([date] BETWEEN @startDate AND @endDate) AND KD.[greenHouseGuid] = @entityguid AND KA.[code] IN ('N','K','P')
+				GROUP BY [DATE],KD.[greenHouseGuid],[attribute]
 			) A 
 			PIVOT(
 						SUM (Total) 
@@ -91,13 +101,14 @@ BEGIN
 		END
 		ELSE IF @companyguid IS NOT NULL
 		BEGIN
+			INSERT INTO #result
 			SELECT * FROM 
-			(	SELECT DATENAME(DW,[DATE]) AS 'Day',[deviceGuid],[attribute],SUM([latest]) 'Total'
-				FROM [dbo].[TelemetrySummary_Daywise] T (NOLOCK)
-				INNER JOIN [dbo].[KitDevice] KD (NOLOCK) ON T.[deviceGuid] = KD.[guid] AND KD.[isDeleted] = 0
-				INNER JOIN [dbo].[HardwareKit] H (NOLOCK) ON KD.[kitGuid] = H.[guid] AND H.[isDeleted] = 0
-				WHERE ([date] BETWEEN @startDate AND @endDate) AND H.[companyGuid] = @companyguid AND [attribute] IN ('N','K','P')
-				GROUP BY DATENAME(DW,[DATE]),[deviceGuid],[attribute]
+			(	SELECT [DATE], KD.[greenHouseGuid] AS [guid],[attribute], AVG([avg]) 'Total'
+				FROM [dbo].[TelemetrySummary_Hourwise] T (NOLOCK)
+				INNER JOIN [dbo].[Device] KD (NOLOCK) ON T.[deviceGuid] = KD.[guid] AND KD.[isDeleted] = 0
+				INNER JOIN [dbo].[KitTypeAttribute] KA (NOLOCK) ON KA.[code] = T.[attribute] AND KA.[tag] = KD.[tag]
+				WHERE ([date] BETWEEN @startDate AND @endDate) AND KD.[companyGuid] = @companyguid AND KA.[code] IN ('N','K','P')
+				GROUP BY[DATE], KD.[greenHouseGuid], [attribute]
 			) A 
 			PIVOT(
 						SUM (Total) 
@@ -109,8 +120,17 @@ BEGIN
 					) AS pivot_table; 
 
 		END
+
+		SELECT CONCAT(DATENAME(day, DATEADD(DAY, (T.i - 6), GETUTCDATE())), ' - ', FORMAT( DATEADD(DAY, (T.i - 6), GETUTCDATE()), 'ddd')) AS 'Day'
+		, RES.[guid], ISNULL(RES.[N],0) AS [N], ISNULL(RES.[K],0) AS [K], ISNULL(RES.[P],0) AS [P]
+		FROM (VALUES (6), (5), (4), (3), (2), (1), (0)) AS T(i)
+		LEFT OUTER JOIN ( SELECT * FROM [#result]) RES ON RES.[DATE] = DATEADD(DAY, (T.i - 6), CAST(GETUTCDATE() AS Date))
+		ORDER BY DATEADD(DAY, (T.i - 6), GETUTCDATE())
+
+
         SET @output = 1
-		SET @fieldname = 'Success'   
+		SET @fieldname = 'Success'  
+		SET @syncDate = (SELECT TOP 1 CONVERT(DATETIME,[value]) FROM dbo.[Configuration] (NOLOCK) WHERE [configKey] = 'telemetry-last-exectime')
               
 	END TRY	
 	BEGIN CATCH	

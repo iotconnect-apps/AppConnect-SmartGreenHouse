@@ -6,9 +6,18 @@
       </a>
       Green House Details
     </h1>
+    <div *ngIf="lastSyncDate != ''" class="lastsync">
+      <p class="feature-icon-holder mb-0">
+        <span class="ng-star-inserted">
+          Last Sync on
+          {{lastSyncDate}} (UTC)
+        </span>
+      </p>
+    </div>
   </section>
   <!--<a style="cursor:pointer" (click)="Respond()" title="View"><img src="../../../../assets/images/view-user.svg" alt="View"></a>-->
-
+  <div class="row">
+  </div>
   <div class="row">
     <div class="col-lg-12">
       <div class="drag-body dashboard-widget h-100">
@@ -24,7 +33,7 @@
                 <div class="col-md-5 col-xl-5 align-self-center text-center">
                   <div class="greenhousedetail-image-box m-auto pb-2">
                     <img alt="" class="img-fluid"
-                         src="{{image == '00000000-0000-0000-0000-000000000000' || image == null ? _appConstant.noImg: mediaUrl + image}}" />
+                         src="{{image == '00000000-0000-0000-0000-000000000000' || image == null || image == '' ? _appConstant.noImg: mediaUrl + image}}" />
                   </div>
                 </div>
                 <div class="col">
@@ -36,7 +45,9 @@
                           {{address1}}, {{address2}}<br />
                           {{city}} {{zipcode}}
                         </p>
-                        <p class="user-details">Description : <span>{{description == null? 'NA': description}} </span></p>
+                        <p class="user-details">
+                          Description : <span>{{description == null? 'NA': description}} </span>
+                        </p>
                         <p class="user-details">
                           Status : <span class="active">{{status ? _appConstant.activeStatus : _appConstant.inactiveStatus }} </span>
                         </p>
@@ -60,7 +71,7 @@
                         Energy Usages (kWh)
                       </div>
                       <div class="current-statistics-data text-yellow">
-                        {{energyUsage}}
+                        {{stats.energyUsage}}
                       </div>
                     </div>
                     <div class="current-statistics-item media-item">
@@ -70,8 +81,8 @@
                       <div class="current-statistics-text">
                         Temperature
                       </div>
-                      <div class="current-statistics-data text-orange" *ngIf="temperature">
-                        {{temperature}}<sup>0</sup>F
+                      <div class="current-statistics-data text-orange">
+                        {{stats.temperature}}<sup>0</sup>F
                       </div>
                     </div>
                     <div class="current-statistics-item media-item">
@@ -81,8 +92,8 @@
                       <div class="current-statistics-text">
                         Moisture
                       </div>
-                      <div class="current-statistics-data text-blue" *ngIf="moisture">
-                        {{moisture}}%
+                      <div class="current-statistics-data text-blue">
+                        {{stats.moisture}}%
                       </div>
                     </div>
                     <div class="current-statistics-item media-item">
@@ -92,8 +103,8 @@
                       <div class="current-statistics-text">
                         Humidity
                       </div>
-                      <div class="current-statistics-data text-green" *ngIf="humidity">
-                        {{humidity}}%
+                      <div class="current-statistics-data text-green">
+                        {{stats.humidity}}%
                       </div>
                     </div>
                     <div class="current-statistics-item media-item">
@@ -104,7 +115,7 @@
                         Water Usages (gal)
                       </div>
                       <div class="current-statistics-data text-skyblue">
-                        {{waterUsage}}
+                        {{stats.waterUsage}}
                       </div>
                     </div>
                     <div class="current-statistics-item media-item">
@@ -112,10 +123,10 @@
                         <img src="../../../../assets/images/devices-total-icon.svg" />
                       </div>
                       <div class="current-statistics-text">
-                        Total H/W Kit
+                        Total Devices
                       </div>
                       <div class="current-statistics-data text-gray">
-                        {{totalDevices}}
+                        {{stats.totalDevices}}
                       </div>
                     </div>
 
@@ -149,7 +160,7 @@
               <div class="text-center text-center m-r-20 m-l-20">
                 <div class="crops-img-box">
                   <img alt="" class="img-fluid"
-                       src="{{crop.image == '00000000-0000-0000-0000-000000000000' || crop.image == null ? _appConstant.noImg: mediaUrl + crop.image}}">
+                       src="{{crop.image == '00000000-0000-0000-0000-000000000000' || crop.image == null || crop.image == '' ? _appConstant.noImg: mediaUrl + crop.image}}">
                 </div>
                 <p>{{crop.name}}</p>
               </div>
@@ -196,11 +207,13 @@
           </ul>
         </div>
         <mat-card class="dashboard-card mat-card">
-            <google-chart *ngIf="chart['soilNutritions']['dataTable'].length" #cchart [data]="chart['soilNutritions']"></google-chart>
-            <div *ngIf="!chart['soilNutritions']['dataTable'].length" class="text-center d-flex align-items-center justify-content-center" style="height: 300px;">
-              No data found
-            </div>
-            <!-- <img src="../../../assets/images/graph-01.jpg" alt="Soil Nutritions"> -->
+          <google-chart *ngIf="chart['soilNutritions']['dataTable'].length" #cchart [data]="chart['soilNutritions']">
+          </google-chart>
+          <div *ngIf="!chart['soilNutritions']['dataTable'].length"
+               class="text-center d-flex align-items-center justify-content-center" style="height: 300px;">
+            No data found
+          </div>
+          <!-- <img src="../../../assets/images/graph-01.jpg" alt="Soil Nutritions"> -->
         </mat-card>
       </div>
     </div>
@@ -218,8 +231,10 @@
         </div>
         <mat-card class="dashboard-card mat-card">
           <!-- <img src="../../../assets/images/graph-02.jpg" alt="Energy Consumption"> -->
-          <google-chart *ngIf="chart['energyConsumption']['dataTable'].length" #cchart [data]="chart['energyConsumption']"></google-chart>
-          <div *ngIf="!chart['energyConsumption']['dataTable'].length" class="text-center d-flex align-items-center justify-content-center" style="height: 300px;">
+          <google-chart *ngIf="chart['energyConsumption']['dataTable'].length" #cchart
+                        [data]="chart['energyConsumption']"></google-chart>
+          <div *ngIf="!chart['energyConsumption']['dataTable'].length"
+               class="text-center d-flex align-items-center justify-content-center" style="height: 300px;">
             No data found
           </div>
         </mat-card>
@@ -239,8 +254,10 @@
         </div>
         <mat-card class="dashboard-card mat-card">
           <!-- <img src="../../../assets/images/graph-02.jpg" alt="Energy Consumption"> -->
-          <google-chart *ngIf="chart['waterConsumption']['dataTable'].length" #cchart [data]="chart['waterConsumption']"></google-chart>
-          <div *ngIf="!chart['waterConsumption']['dataTable'].length" class="text-center d-flex align-items-center justify-content-center" style="height: 300px;">
+          <google-chart *ngIf="chart['waterConsumption']['dataTable'].length" #cchart
+                        [data]="chart['waterConsumption']"></google-chart>
+          <div *ngIf="!chart['waterConsumption']['dataTable'].length"
+               class="text-center d-flex align-items-center justify-content-center" style="height: 300px;">
             No data found
           </div>
         </mat-card>
@@ -295,10 +312,10 @@
                       <h3 class="user-name">
                         <a href="javascript:void();" [routerLink]="['/device',device.guid]">{{device.name}}</a>
                       </h3>
-                      <p class="user-details">Name : <span>{{device.name}}</span></p>
-                      <p class="user-details">GreenHouse :<span>{{device.greenHouseName}}</span></p>
-                      <p class="user-details">H/W Kit : <span>{{device.count}}</span></p>
-                      <p class="user-details">Acquired : <span>{{device?.isProvisioned  ? "Yes": "No" }}</span></p>
+                      <p class="user-details">Name: <span>{{device.name}}</span></p>
+                      <p class="user-details">GreenHouse: <span>{{device.greenHouseName}}</span></p>
+                      <p class="user-details">Device(s): <span>{{device.count}}</span></p>
+                      <p class="user-details">Acquired: <span>{{device?.isProvisioned  ? "Yes": "No" }}</span></p>
                     </div>
                   </div>
                 </div>
@@ -400,13 +417,23 @@
             </mat-form-field>
           </div>
           <div class="col-12">
-            <input formControlName="imageFile" (change)="handleImageInput($event)" class="upload-image" type="file" />
-            <div class="form-control-feedback" *ngIf="cropForm.controls['imageFile'].errors">
-              <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
-                 *ngIf="userForm.controls['imageFile'].errors.required && checkSubmitStatus">
-                Upload Image
-              </p>
-            </div>
+            <label for="myFile" class="upload-file">
+              <input formControlName="imageFile" #myFile id="myFile" (change)="handleImageInput($event)" class="upload-image"
+                     type="file" accept=".jpg, .jpeg, .png" />
+              <div class="form-control-feedback" *ngIf="cropForm.controls['imageFile'].errors">
+                <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                   *ngIf="userForm.controls['imageFile'].errors.required && checkSubmitStatus">
+                  Upload Image
+                </p>
+              </div>
+            </label>
+            <fieldset class="form-group user-profle-image gh-add">
+              <img *ngIf="cropObject['image']" (click)="imageRemove()" class="close-icn"
+                   src="../../../../assets/images/cancel-dashboard.svg" alt="">
+              <img alt="" class="img-fluid"
+                   src="{{cropObject['image'] == '00000000-0000-0000-0000-000000000000' || cropObject['image'] == null || cropObject['image'] == '' ? _appConstant.noImg: cropObject['image']}}" />
+            </fieldset>
+            <p>{{fileName}}</p>
           </div>
           <div class="col-12 mt-4">
             <div class="form-field">

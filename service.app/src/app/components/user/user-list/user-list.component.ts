@@ -60,7 +60,7 @@ export class UserListComponent implements OnInit {
 		this.dataSource.filter = filterValue;
 	}
 	clickAdd() {
-		this.router.navigate(['/user/add']);
+		this.router.navigate(['/users/add']);
 	}
 
 	setOrder(sort: any) {

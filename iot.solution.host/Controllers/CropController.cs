@@ -1,10 +1,11 @@
-﻿using iot.solution.entity.Structs.Routes;
+﻿using host.iot.solution.Filter;
+using iot.solution.entity.Structs.Routes;
 using iot.solution.model.Models;
 using iot.solution.service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-
+using System.Net;
 using Entity = iot.solution.entity;
 
 namespace host.iot.solution.Controllers
@@ -24,12 +25,13 @@ namespace host.iot.solution.Controllers
 
         [HttpGet]
         [Route(CropRoute.Route.GetCrops, Name = CropRoute.Name.GetCrops)]
-        public Entity.BaseResponse<List<Entity.Crop>> GetCrops(Guid greenHouseId)
+        [EnsureGuidParameterAttribute("greenHouseId", "Greenhouse")]
+        public Entity.BaseResponse<List<Entity.Crop>> GetCrops(string greenHouseId)
         {
             Entity.BaseResponse<List<Entity.Crop>> response = new Entity.BaseResponse<List<Entity.Crop>>(true);
             try
             {
-                response.Data = _service.GetCrops(greenHouseId);
+                response.Data = _service.GetCrops(Guid.Parse(greenHouseId));
             }
             catch (Exception ex)
             {
@@ -56,12 +58,13 @@ namespace host.iot.solution.Controllers
 
         [HttpGet]
         [Route(CropRoute.Route.GetById, Name = CropRoute.Name.GetById)]
-        public Entity.BaseResponse<Entity.Crop> Get(Guid id)
+        [EnsureGuidParameterAttribute("id", "Crop")]
+        public Entity.BaseResponse<Entity.Crop> Get(string id)
         {
             Entity.BaseResponse<Entity.Crop> response = new Entity.BaseResponse<Entity.Crop>(true);
             try
             {
-                response.Data = _service.Get(id);
+                response.Data = _service.Get(Guid.Parse(id));
             }
             catch (Exception ex)
             {
@@ -92,12 +95,13 @@ namespace host.iot.solution.Controllers
 
         [HttpPut]
         [Route(CropRoute.Route.Delete, Name = CropRoute.Name.Delete)]
-        public Entity.BaseResponse<bool> Delete(Guid id)
+        [EnsureGuidParameterAttribute("id", "Crop")]
+        public Entity.BaseResponse<bool> Delete(string id)
         {
             Entity.BaseResponse<bool> response = new Entity.BaseResponse<bool>(true);
             try
             {
-                var status = _service.Delete(id);
+                var status = _service.Delete(Guid.Parse(id));
                 response.IsSuccess = status.Success;
                 response.Message = status.Message;
                 response.Data = status.Success;
@@ -108,15 +112,35 @@ namespace host.iot.solution.Controllers
             }
             return response;
         }
-
-        [HttpPost]
-        [Route(CropRoute.Route.UpdateStatus, Name = CropRoute.Name.UpdateStatus)]
-        public Entity.BaseResponse<bool> UpdateStatus(Guid id, bool status)
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [HttpPut]
+        [Route(CropRoute.Route.DeleteImage, Name = CropRoute.Name.DeleteImage)]
+        [EnsureGuidParameterAttribute("id", "CropImage")]
+        public Entity.BaseResponse<bool> DeleteImage(string id)
         {
             Entity.BaseResponse<bool> response = new Entity.BaseResponse<bool>(true);
             try
             {
-                Entity.ActionStatus result = _service.UpdateStatus(id, status);
+                var status = _service.DeleteImage(Guid.Parse(id));
+                response.IsSuccess = status.Success;
+                response.Message = status.Message;
+                response.Data = status.Success;
+            }
+            catch (Exception ex)
+            {
+                return new Entity.BaseResponse<bool>(false, ex.Message);
+            }
+            return response;
+        }
+        [HttpPost]
+        [Route(CropRoute.Route.UpdateStatus, Name = CropRoute.Name.UpdateStatus)]
+        [EnsureGuidParameterAttribute("id", "Crop")]
+        public Entity.BaseResponse<bool> UpdateStatus(string id, bool status)
+        {
+            Entity.BaseResponse<bool> response = new Entity.BaseResponse<bool>(true);
+            try
+            {
+                Entity.ActionStatus result = _service.UpdateStatus(Guid.Parse(id), status);
                 response.IsSuccess = result.Success;
                 response.Message = result.Message;
                 response.Data = result.Success;

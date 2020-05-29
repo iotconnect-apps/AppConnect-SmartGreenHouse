@@ -21,6 +21,8 @@ namespace iot.solution.entity.Structs.Routes
             public const string GetGreenHouseDevices = "device.getgreenhousedevices";
             public const string GetGreenHouseDevicesDetails = "device.getgreenhousedevicesdetails";
             public const string DeviceCounters = "device.counters";
+            public const string TelemetryData = "device.telemetry";
+            public const string ConnectionStatus = "device.connectionstatus";
         }
 
         public struct Route
@@ -39,6 +41,8 @@ namespace iot.solution.entity.Structs.Routes
             public const string GetGreenHouseDevices = "getgreenhousedevices/{greenhouseId}";
             public const string GetGreenHouseDevicesDetails = "getgreenhousedevicesdetails/{greenhouseId}";
             public const string DeviceCounters = "counters";
+            public const string TelemetryData = "telemetry/{deviceId}";
+            public const string ConnectionStatus = "connectionstatus/{uniqueId}";
         }
     }
 }

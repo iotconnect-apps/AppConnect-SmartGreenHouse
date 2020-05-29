@@ -12,10 +12,11 @@ namespace iot.solution.service.Interface
        
         Entity.ActionStatus Manage(Entity.GreenHouseModel request);
         Entity.ActionStatus Delete(Guid id);
+        Entity.ActionStatus DeleteImage(Guid id);
         Entity.SearchResult<List<Entity.GreenHouseDetail>> List(Entity.SearchRequest request);
         Entity.ActionStatus UpdateStatus(Guid id, bool status);
-        
-        Response.GreenHouseDetailResponse GetGreenHouseDetail(Guid greenhouseId);
+
+        Entity.BaseResponse<Response.GreenHouseDetailResponse> GetGreenHouseDetail(Guid greenhouseId);
         List<Response.GreenHouseCropResponse> GetGreenHouseCorps(Guid greenhouseId);
     }
 }

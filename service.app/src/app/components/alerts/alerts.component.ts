@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner'
 import { DashboardService, NotificationService, Notification } from '../../services';
 import { ActivatedRoute } from '@angular/router';
-
+import * as moment from 'moment-timezone'
 @Component({
   selector: 'app-alerts',
   templateUrl: './alerts.component.html',
@@ -10,7 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class AlertsComponent implements OnInit {
   alerts = [];
-  displayedColumns: string[] = ['message', 'location', 'uniqueId', 'eventDate', 'severity'];
+  displayedColumns: string[] = ['message', 'entityName', 'deviceName', 'eventDate', 'severity'];
   order = true;
   isSearch = false;
   reverse = false;
@@ -36,9 +36,18 @@ export class AlertsComponent implements OnInit {
       if (params['deviceGuid']) {
         this.searchParameters.deviceGuid = params['deviceGuid'];
       }
-     
+
     });
     this.getAlertList();
+  }
+
+  getLocalDate(lDate) {
+    var utcDate = moment.utc(lDate, 'YYYY-MM-DDTHH:mm:ss.SSS');
+    // Get the local version of that date
+    var localDate = moment(utcDate).local();
+    let res = moment(localDate).format('MMM DD, YYYY hh:mm:ss A');
+    return res;
+
   }
 
   getAlertList() {

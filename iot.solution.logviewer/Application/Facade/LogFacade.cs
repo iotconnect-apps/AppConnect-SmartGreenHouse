@@ -380,7 +380,7 @@ namespace component.services.logger.viewer.Application.Facade
             try
             {
                 LogConfiguration loggingConfig = LogConfigurations.Instance.GetLogSeverity(LogSeverity.LostMessage);
-                if (loggingConfig.IsOms)
+                if (loggingConfig!=null && loggingConfig.IsOms)
                 {
                     AzureLogAnalytics.Instance.LostMesssage(request);
                 }

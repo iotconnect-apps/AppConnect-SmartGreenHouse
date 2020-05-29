@@ -47,7 +47,7 @@ namespace component.services.logger.viewer.Controllers
 
                 SqlParameter param = new SqlParameter();
                 param.ParameterName = "@hours";
-                param.Value = 10;
+                param.Value = 1;
                 cmd.Parameters.Add(param);
 
                 cmd.Connection = conn;
@@ -70,11 +70,14 @@ namespace component.services.logger.viewer.Controllers
                         obj.Logger = dr["Logger"].ToString();
                         obj.LoggerCount = Convert.ToInt32(dr["LoggerCount"].ToString());
 
-                        if (List.LoggerList.Where(t => t.Logger == obj.Logger && t.LoggerCount == obj.LoggerCount).Count() == 0)
+                        if (List.LoggerList.Where(t => t.Logger == obj.Logger).Count() == 0)
                         {
                             List.LoggerList.Add(obj);
                         }
-
+                        else
+                        {
+                            List.LoggerList.Where(t => t.Logger == obj.Logger).ToList()[0].LoggerCount += Convert.ToInt32(dr["SeverityCount"].ToString());
+                        }
                         severities Objs = new severities();
                         Objs.Logger = dr["Logger"].ToString();
                         Objs.Severity = dr["Severity"].ToString();
@@ -132,11 +135,14 @@ namespace component.services.logger.viewer.Controllers
                         obj.Logger = dr["Logger"].ToString();
                         obj.LoggerCount = Convert.ToInt32(dr["LoggerCount"].ToString());
 
-                        if (List.LoggerList.Where(t => t.Logger == obj.Logger && t.LoggerCount == obj.LoggerCount).Count() == 0)
+                        if (List.LoggerList.Where(t => t.Logger == obj.Logger).Count() == 0)
                         {
                             List.LoggerList.Add(obj);
                         }
-
+                        else
+                        {
+                            List.LoggerList.Where(t => t.Logger == obj.Logger).ToList()[0].LoggerCount += Convert.ToInt32(dr["SeverityCount"].ToString());
+                        }
                         severities Objs = new severities();
                         Objs.Logger = dr["Logger"].ToString();
                         Objs.Severity = dr["Severity"].ToString();
@@ -153,8 +159,8 @@ namespace component.services.logger.viewer.Controllers
 
         public ActionResult ErrorList(string logger, string severity, int hours = 0, int connId = 0)
         {
-            string applicationCode = logger.Split('-')[0].Trim();
-            logger = logger.Split('-')[1].Trim();
+            string applicationCode = logger.Split('_')[0].Trim();
+            // logger = logger.Split('_')[1].Trim();
 
             ErrorModel lstErrors = new ErrorModel();
             lstErrors.Logger = logger;
@@ -165,41 +171,41 @@ namespace component.services.logger.viewer.Controllers
 
             string ConnString = Enum.GetName(typeof(Common.ConnectionStringName), lstErrors.ConStringId);
 
-        using (SqlConnection conn = new SqlConnection(GetConnectionString(ConnString)))
-        {
-            SqlCommand cmd = new SqlCommand("GetSeverityListByLogger");
-
-            SqlParameter param = new SqlParameter();
-            param.ParameterName = "@logger";
-            param.Value = logger;
-            cmd.Parameters.Add(param);
-
-            param = new SqlParameter();
-            param.ParameterName = "@applicationCode";
-            param.Value = applicationCode;
-            cmd.Parameters.Add(param);
-
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandTimeout = 120;
-            cmd.Connection = conn;
-            conn.Open();
-            SqlDataAdapter MyDataAdapter = new SqlDataAdapter();
-            MyDataAdapter.SelectCommand = cmd;
-            DataSet oDataset = new DataSet();
-            DataTable oDatatable = new DataTable();
-            cmd.ExecuteNonQuery();
-            MyDataAdapter.Fill(oDataset);
-            oDatatable = oDataset.Tables[0];
-            conn.Close();
-
-            foreach (DataRow dr in oDatatable.Rows)
+            using (SqlConnection conn = new SqlConnection(GetConnectionString(ConnString)))
             {
-                SelectListItem item = new SelectListItem();
-                item.Text = dr["Severity"].ToString();
-                item.Value = dr["Severity"].ToString();
-                lstErrors.SeverityList.Add(item);
+                SqlCommand cmd = new SqlCommand("GetSeverityListByLogger");
+
+                SqlParameter param = new SqlParameter();
+                param.ParameterName = "@logger";
+                param.Value = logger;
+                cmd.Parameters.Add(param);
+
+                param = new SqlParameter();
+                param.ParameterName = "@applicationCode";
+                param.Value = applicationCode;
+                cmd.Parameters.Add(param);
+
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 120;
+                cmd.Connection = conn;
+                conn.Open();
+                SqlDataAdapter MyDataAdapter = new SqlDataAdapter();
+                MyDataAdapter.SelectCommand = cmd;
+                DataSet oDataset = new DataSet();
+                DataTable oDatatable = new DataTable();
+                cmd.ExecuteNonQuery();
+                MyDataAdapter.Fill(oDataset);
+                oDatatable = oDataset.Tables[0];
+                conn.Close();
+
+                foreach (DataRow dr in oDatatable.Rows)
+                {
+                    SelectListItem item = new SelectListItem();
+                    item.Text = dr["Severity"].ToString();
+                    item.Value = dr["Severity"].ToString();
+                    lstErrors.SeverityList.Add(item);
+                }
             }
-        }
 
             using (SqlConnection conn = new SqlConnection(GetConnectionString(ConnString)))
             {
@@ -283,7 +289,7 @@ namespace component.services.logger.viewer.Controllers
 
                 SqlParameter param = new SqlParameter();
                 param.ParameterName = "@logger";
-                param.Value = model.Logger.Split('-')[1].Trim();
+                param.Value = model.Logger;//.Split('_')[1].Trim();
                 cmd.Parameters.Add(param);
 
                 param = new SqlParameter();
@@ -319,7 +325,7 @@ namespace component.services.logger.viewer.Controllers
 
                 SqlParameter param = new SqlParameter();
                 param.ParameterName = "@logger";
-                param.Value = model.Logger.Split('-')[1].Trim();
+                param.Value = model.Logger;//.Split('_')[1].Trim();
                 cmd.Parameters.Add(param);
 
                 param = new SqlParameter();

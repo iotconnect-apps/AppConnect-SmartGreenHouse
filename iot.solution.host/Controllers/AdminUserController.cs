@@ -13,6 +13,7 @@ using Entity = iot.solution.entity;
 using Response = iot.solution.entity.Response;
 using AutoMapper.Configuration;
 using component.helper;
+using host.iot.solution.Filter;
 
 namespace iot.solution.host.Controllers
 {
@@ -81,12 +82,13 @@ namespace iot.solution.host.Controllers
 
         [HttpGet]
         [Route(AdminRoute.Route.GetById, Name = AdminRoute.Name.GetById)]
-        public Entity.BaseResponse<Entity.AdminUserResponse> Get(Guid id)
+        [EnsureGuidParameterAttribute("id", "Admin User")]
+        public Entity.BaseResponse<Entity.AdminUserResponse> Get(string id)
         {
             Entity.BaseResponse<Entity.AdminUserResponse> response = new BaseResponse<AdminUserResponse>(true);
             try
             {
-                response.Data = _adminUserService.Get(id);
+                response.Data = _adminUserService.Get(Guid.Parse(id));
                 if(response.Data == null)
                 {
                     response.IsSuccess = false;
@@ -110,7 +112,8 @@ namespace iot.solution.host.Controllers
 
         [HttpPut]
         [Route(AdminRoute.Route.Delete, Name = AdminRoute.Name.Delete)]
-        public Entity.BaseResponse<UserResponse> Delete(Guid id)
+        [EnsureGuidParameterAttribute("id", "Admin User")]
+        public Entity.BaseResponse<UserResponse> Delete(string id)
         {
             Entity.BaseResponse<UserResponse> response = new Entity.BaseResponse<UserResponse>(true);
 
@@ -120,7 +123,7 @@ namespace iot.solution.host.Controllers
                 {
                     return new Entity.BaseResponse<UserResponse>(false, "You can't delete your own account!");
                 }
-                var status = _adminUserService.Delete(id);
+                var status = _adminUserService.Delete(Guid.Parse(id));
                 response.IsSuccess = true;
                 response.Message = status.Message;
                 response.Data = status.Data;
@@ -136,7 +139,8 @@ namespace iot.solution.host.Controllers
 
         [HttpPut]
         [Route(AdminRoute.Route.UpdateStatus, Name = AdminRoute.Name.UpdateStatus)]
-        public Entity.BaseResponse<bool> UpdateStatus(Guid id, bool status)
+        [EnsureGuidParameterAttribute("id", "Admin User")]
+        public Entity.BaseResponse<bool> UpdateStatus(string id, bool status)
         {
             Entity.BaseResponse<bool> response = new Entity.BaseResponse<bool>(true);
 
@@ -149,7 +153,7 @@ namespace iot.solution.host.Controllers
                     response.Data = false;
                     return response;
                 }
-                var result = _adminUserService.UpdateStatus(id, status);
+                var result = _adminUserService.UpdateStatus(Guid.Parse(id), status);
 
                 if (result.Success)
                 {

@@ -79,7 +79,7 @@
 						</a>
 					</div>
 					<div class="table-icons" *ngIf="(element.guid != ((currentUser.userDetail.id | lowercase)))">
-						<a class="green" [routerLink]="['/user',element.guid]" title="Edit">
+						<a class="green" [routerLink]="['/users',element.guid]" title="Edit">
 							<img alt="Edit" src="./assets/images/icon-edit.svg">
 						</a>
 						<a class="red" href="javascript:void(0)" data-toggle="modal"

@@ -65,6 +65,8 @@ namespace iot.solution.service.Mapper
                 mc.CreateMap<Entity.AddUserRequest, IOT.UpdateUserModel>().ConvertUsing(new AddUserRequestToUpdateUserModelMapping());
                 mc.CreateMap<Entity.ChangePasswordRequest, IOT.ChangePasswordModel>().ConvertUsing(new ChangePasswordRequestToChangePasswordModel());
                 mc.CreateMap<Entity.DeviceCounterResult, IOT.DeviceCounterResult>().ReverseMap();
+                mc.CreateMap<Entity.DeviceTelemetryDataResult, IOT.DeviceTelemetryData>().ReverseMap();
+                mc.CreateMap<Entity.DeviceConnectionStatusResult, IOT.DeviceConnectionStatus>().ReverseMap();
                 #endregion
 
                 #region "AdminUser Mapping"

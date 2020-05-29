@@ -115,7 +115,7 @@ BEGIN
 			FROM [dbo].[Role] AS r WITH (NOLOCK)
 			WHERE r.[companyGuid] = @companyguid AND r.[isdeleted] = 0'								
 			+ CASE WHEN @search IS NULL THEN '' ELSE
-			' AND (r.name LIKE ''%' + @search + '%'') '
+			' AND (r.name LIKE ''%' + @search + '%'' or r.description like ''%' + @search +'%'') '
 			 END +
 		') data '
 		

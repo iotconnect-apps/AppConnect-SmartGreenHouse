@@ -1,9 +1,9 @@
 {
     "env": {
-        "name": "qa"
+        "name": "" 	//IoTConnect Environment
     },
     "apiServer": {
-        "baseUrl": "http://40.113.196.248:402/"
+        "baseUrl": "" //Application URL.
     }
 }
 

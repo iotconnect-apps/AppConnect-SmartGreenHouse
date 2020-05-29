@@ -1,4 +1,5 @@
-﻿using iot.solution.entity.Structs.Routes;
+﻿using host.iot.solution.Filter;
+using iot.solution.entity.Structs.Routes;
 using iot.solution.service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -116,12 +117,14 @@ namespace host.iot.solution.Controllers
         }
         [HttpGet]
         [Route(LookupRoute.Route.GetSensorsLookup, Name = LookupRoute.Name.GetSensorsLookup)]
-        public Entity.BaseResponse<List<Entity.LookupItem>> GetSensorsLookup(Guid templateId, Guid deviceId)
+        [EnsureGuidParameterAttribute("templateId", "Kit Type")]
+        [EnsureGuidParameterAttribute("deviceId", "Kit Type")]
+        public Entity.BaseResponse<List<Entity.LookupItem>> GetSensorsLookup(string templateId, string deviceId)
         {
             Entity.BaseResponse<List<Entity.LookupItem>> response = new Entity.BaseResponse<List<Entity.LookupItem>>(true);
             try
             {
-                response.Data = _service.GetSensors(templateId,deviceId);
+                response.Data = _service.GetSensors(Guid.Parse(templateId),Guid.Parse(deviceId));
             }
             catch (Exception ex)
             {
@@ -131,12 +134,13 @@ namespace host.iot.solution.Controllers
         }
         [HttpGet]
         [Route(LookupRoute.Route.GetTagLookup, Name = LookupRoute.Name.GetTagLookup)]
-        public Entity.BaseResponse<List<Entity.LookupItem>> GetTemplateAttribute(Guid templateId)
+        [EnsureGuidParameterAttribute("templateId", "Kit Type")]
+        public Entity.BaseResponse<List<Entity.LookupItem>> GetTemplateAttribute(string templateId)
         {
             Entity.BaseResponse<List<Entity.LookupItem>> response = new Entity.BaseResponse<List<Entity.LookupItem>>(true);
             try
             {
-                response.Data = _service.GetTemplateAttribute(templateId);
+                response.Data = _service.GetTemplateAttribute(Guid.Parse(templateId));
             }
             catch (Exception ex)
             {
@@ -147,12 +151,13 @@ namespace host.iot.solution.Controllers
 
         [HttpGet]
         [Route(LookupRoute.Route.GetTemplateCommands, Name = LookupRoute.Name.GetTemplateCommands)]
-        public Entity.BaseResponse<List<Entity.LookupItem>> GetTemplateCommands(Guid templateId)
+        [EnsureGuidParameterAttribute("templateId", "Kit Type")]
+        public Entity.BaseResponse<List<Entity.LookupItem>> GetTemplateCommands(string templateId)
         {
             Entity.BaseResponse<List<Entity.LookupItem>> response = new Entity.BaseResponse<List<Entity.LookupItem>>(true);
             try
             {
-                response.Data = _service.GetTemplateCommands(templateId);
+                response.Data = _service.GetTemplateCommands(Guid.Parse(templateId));
             }
             catch (Exception ex)
             {

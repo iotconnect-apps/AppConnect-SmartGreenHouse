@@ -1,4 +1,5 @@
-﻿using iot.solution.entity.Structs.Routes;
+﻿using host.iot.solution.Filter;
+using iot.solution.entity.Structs.Routes;
 using iot.solution.service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -36,11 +37,12 @@ namespace host.iot.solution.Controllers
         [ProducesResponseType(typeof(Entity.Company), (int)HttpStatusCode.OK)]
         [HttpGet]
         [Route(CompanyConfigRoute.Route.GetById, Name = CompanyConfigRoute.Name.GetById)]
-        public IActionResult Get(Guid id)
+        [EnsureGuidParameterAttribute("id", "Company")]
+        public IActionResult Get(string id)
         {
             try
             {
-                return Ok(_companyConfigService.Get(id));
+                return Ok(_companyConfigService.Get(Guid.Parse(id)));
             }
             catch (Exception ex)
             {
@@ -68,11 +70,12 @@ namespace host.iot.solution.Controllers
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
         [HttpPut]
         [Route(CompanyConfigRoute.Route.Delete, Name = CompanyConfigRoute.Name.Delete)]
-        public IActionResult Delete(Guid id)
+        [EnsureGuidParameterAttribute("id", "Company")]
+        public IActionResult Delete(string id)
         {
             try
             {
-                return Ok(_companyConfigService.Delete(id));
+                return Ok(_companyConfigService.Delete(Guid.Parse(id)));
             }
             catch (Exception ex)
             {

@@ -22,6 +22,11 @@ export class CropService {
     });
   }
 
+  removeCropImage(entityId) {
+		return this.httpClient.put<any>(this.apiServer.baseUrl + 'api/crop/deleteimage/'+entityId,{}).map(response => {
+		  return response;
+		});
+	  }
 
 /**
  * Ger crop details

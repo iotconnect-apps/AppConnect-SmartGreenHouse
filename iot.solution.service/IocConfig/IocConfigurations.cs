@@ -19,7 +19,7 @@ namespace iot.solution.service.IocConfig
             //services.AddScoped<IUserService, UserService>();
             //services.AddScoped<IRoleService, RoleService>();
 
-            
+
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<DbContext, qagreenhouseContext>();
             //services.AddSingleton<IIotConnectProvider>(provider => new IotConnectProvider("","",""));
@@ -32,7 +32,7 @@ namespace iot.solution.service.IocConfig
 
             //repository
             services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(UserRepository))).Where(c => c.Name.EndsWith("Repository")).AsPublicImplementedInterfaces();
-
+            
         }        
     }
 }

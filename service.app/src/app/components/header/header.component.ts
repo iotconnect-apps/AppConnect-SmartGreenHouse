@@ -163,7 +163,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (users.length && user_id) {
       let isAlert = users.find(o => o.guid === user_id);
       if (isAlert) {
-        let now = moment().format("MMM DD, YYYY h:mm:ss A");
+        let now = moment(obj.data.data.time).format("MMM DD, YYYY h:mm:ss A");
         this.alerts.unshift({
           time: now,
           message: obj.data.data.data.message,

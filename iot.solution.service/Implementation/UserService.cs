@@ -285,7 +285,7 @@ namespace iot.solution.service.Data
                     var user = _userRepository.GetByUniqueId(r => r.Guid == Guid.Parse(userDetail.Id));
                     if (user == null)
                     {
-                        return new Entity.ActionStatus() { Success = false, Message = "User is not exits in solutions" };
+                        return new Entity.ActionStatus() { Success = false, Message = "User is not exist in Solution" };
                     }
                     userDetail.FullName = user.FirstName.ToString() + " " + user.LastName.ToString();
                     result.Data = new Entity.LoginResponse

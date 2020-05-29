@@ -270,21 +270,117 @@ export class DeviceAddComponent implements OnInit {
 			this.parentDeviceGuid = params.parentDeviceGuid;
 		});
 		this.parentDeviceObject = { uniqueId: '', name: '', templateGuid: '', greenHouseGuid: '', note: '' };
-		this.curentstaticsObject = { energyUsage: '', humidity: '', moisture: '', temperature: '', totalDevices: '', waterUsage: '' }
+		this.curentstaticsObject = {
+			energyUsage: '',
+			humidity: '',
+			moisture: '',
+			temperature: '',
+			totalDevices: '',
+			waterUsage: '',
+			feedpressure: '',
+			flowrate: '',
+			intst: '',
+		}
 	}
 	alerts = [];
+	deviceConnected = false;
 	// before view init
 	ngOnInit() {
 
 		this.createFormGroup();
 		//this.getDeviceData();
 		this.getAllDeviceData(this.parentDeviceGuid)
-		this.getDevicestatics();
+		//this.getDevicestatics();
+		this.getSensorsLastValue();
 		this.getChildDeviceList()
 		this.getEnergyUsageChartData();
 		this.getSoilnutritionChartData();
 		this.getWaterConsumptionChartData();
 		this.getAlertList();
+
+	}
+
+	getDevicestatics() {
+		this.spinner.show();
+		this.deviceService.getdevicestatics(this.parentDeviceGuid).subscribe(response => {
+			if (response.isSuccess === true) {
+				this.spinner.hide();
+				this.curentstaticsObject = {
+					energyUsage: (response.data.totalEnergyCount) ? response.data.totalEnergyCount : 0,
+					humidity: (response.data.avgHumidity) ? response.data.avgHumidity : 0,
+					moisture: (response.data.avgMoisture) ? response.data.avgMoisture : 0,
+					temperature: (response.data.avgTemp) ? response.data.avgTemp : 0,
+					totalDevices: (response.data.totalDevice) ? response.data.totalDevice : 0,
+					waterUsage: (response.data.totalWaterUsage) ? response.data.totalWaterUsage : 0,
+				}
+
+			} else {
+				this._notificationService.add(new Notification('error', response.message));
+			}
+		}, error => {
+			this.spinner.hide();
+			this._notificationService.add(new Notification('error', error));
+		});
+	}
+	getSensorsLastValue() {
+		this.spinner.show();
+		this.deviceService.getSensorsLastValue(this.parentDeviceGuid).subscribe(response => {
+			if (response.isSuccess === true) {
+				response.data.forEach(element => {
+					if (element.attributeName === "temp") {
+						this.curentstaticsObject['temperature'] = element.attributeValue;
+					} else if (element.attributeName === "moisture") {
+						this.curentstaticsObject['moisture'] = element.attributeValue;
+					} else if (element.attributeName === "humidity") {
+						this.curentstaticsObject['humidity'] = element.attributeValue;
+					} else if (element.attributeName === "feedpressure") {
+						this.curentstaticsObject['feedpressure'] = element.attributeValue;
+					} else if (element.attributeName === "flowrate") {
+						this.curentstaticsObject['flowrate'] = element.attributeValue;
+					} else if (element.attributeName === "intst") {
+						this.curentstaticsObject['intst'] = element.attributeValue;
+					}
+				});
+				this.spinner.hide();
+				// this.curentstaticsObject = {
+				// 	energyUsage: (response.data.totalEnergyCount) ? response.data.totalEnergyCount : 0,
+				// 	humidity: (response.data.avgHumidity) ? response.data.avgHumidity : 0,
+				// 	moisture: (response.data.avgMoisture) ? response.data.avgMoisture : 0,
+				// 	temperature: (response.data.avgTemp) ? response.data.avgTemp : 0,
+				// 	totalDevices: (response.data.totalDevice) ? response.data.totalDevice : 0,
+				// 	waterUsage: (response.data.totalWaterUsage) ? response.data.totalWaterUsage : 0,
+				// }
+
+			} else {
+				this._notificationService.add(new Notification('error', response.message));
+			}
+		}, error => {
+			this.spinner.hide();
+			this._notificationService.add(new Notification('error', error));
+		});
+	}
+
+	getDeviceStatus(uniqueId) {
+		this.spinner.show();
+		this.deviceService.getDeviceStatus(uniqueId).subscribe(response => {
+			if (response.isSuccess === true) {
+				this.isConnected = response.data.isConnected;
+				this.spinner.hide();
+			} else {
+				this._notificationService.add(new Notification('error', response.message));
+			}
+		}, error => {
+			this.spinner.hide();
+			this._notificationService.add(new Notification('error', error));
+		});
+	}
+
+	getLocalDate(lDate) {
+		var utcDate = moment.utc(lDate, 'YYYY-MM-DDTHH:mm:ss.SSS');
+		// Get the local version of that date
+		var localDate = moment(utcDate).local();
+		let res = moment(localDate).format('MMM DD, YYYY hh:mm:ss A');
+		return res;
 
 	}
 
@@ -296,7 +392,7 @@ export class DeviceAddComponent implements OnInit {
 			sortBy: 'eventDate desc',
 			deviceGuid: this.parentDeviceGuid,
 			entityGuid: '',
-		  };
+		};
 		this.spinner.show();
 		this.dashboardService.getAlertsList(searchParameters).subscribe(response => {
 			this.spinner.hide();
@@ -318,11 +414,11 @@ export class DeviceAddComponent implements OnInit {
 		this.dashboardService.getWaterUsageChartData(obj).subscribe(response => {
 			this.spinner.hide();
 			if (response.isSuccess === true) {
-				if(response.data.length){
+				if (response.data.length) {
 					data.push(['Months', 'Water Consumption'])
 				}
 				response.data.forEach(element => {
-					data.push([element.month, parseInt(element.value)]);
+					data.push([element.month, parseFloat(element.value)]);
 				});
 				this.createHistoryChart('waterConsumption', data, 'Months', 'gal');
 			}
@@ -343,11 +439,11 @@ export class DeviceAddComponent implements OnInit {
 		this.dashboardService.getEnergyUsageChartData(obj).subscribe(response => {
 			this.spinner.hide();
 			if (response.isSuccess === true) {
-				if(response.data.length){
+				if (response.data.length) {
 					data.push(['Months', 'Energy'])
 				}
 				response.data.forEach(element => {
-					data.push([element.month, parseInt(element.value)]);
+					data.push([element.month, parseFloat(element.value)]);
 				});
 				this.createHistoryChart('energyConsumption', data, 'Months', 'KWH');
 			}
@@ -368,13 +464,13 @@ export class DeviceAddComponent implements OnInit {
 		this.dashboardService.getSoilnutritionChartData(obj).subscribe(response => {
 			this.spinner.hide();
 			if (response.isSuccess === true) {
-				if(response.data.length){
+				if (response.data.length) {
 					data.push(['pH Level', 'N', 'P', 'K'])
 				}
 				response.data.forEach(element => {
-					data.push([element.phLevel, parseInt(element['n']), parseInt(element['p']), parseInt(element['k'])]);
+					data.push([element.day, parseFloat(element['n']), parseFloat(element['p']), parseFloat(element['k'])]);
 				});
-				this.createHistoryChart('soilNutritions', data, 'pH Level', '% Availability');
+				this.createHistoryChart('soilNutritions', data, 'Days', '% pH Level');
 			}
 			else {
 				this._notificationService.add(new Notification('error', response.message));
@@ -388,32 +484,66 @@ export class DeviceAddComponent implements OnInit {
 	}
 	createHistoryChart(key, data, hAxisTitle, vAxisTitle) {
 		let height = this.chartHeight;
+		let legend = { position: 'none' };
+		var hAxis = {};
 		if (key === 'soilNutritions') {
-			height = 450
+			height = 480;
+			legend = { position: 'right' };
+			hAxis = {
+				title: hAxisTitle,
+				gridlines: {
+					count: 5
+				},
+				// slantedText:true,
+				// slantedTextAngle:45,
+			}
+		} else {
+			hAxis = {
+				title: hAxisTitle,
+				gridlines: {
+					count: 5
+				},
+				slantedText: true,
+				slantedTextAngle: 45,
+			}
 		}
+
+		if (key === 'energyConsumption') {
 		this.chart[key] = {
 			chartType: 'ColumnChart',
 			dataTable: data,
 			options: {
-				height: height,
+				height: this.chartHeight,
 				width: this.chartWidth,
 				interpolateNulls: true,
+				legend: legend,
 				backgroundColor: this.bgColor,
-				hAxis: {
-					title: hAxisTitle,
-					gridlines: {
-						count: 5
-					},
-				},
+				colors: ['#ed734c'],
+				hAxis: hAxis,
 				vAxis: {
 					title: vAxisTitle,
-					gridlines: {
-						count: 1
-					},
 				}
 			},
 			formatters: this.headFormate
 		};
+		}else{
+		this.chart[key] = {
+			chartType: 'ColumnChart',
+			dataTable: data,
+			options: {
+				height: this.chartHeight,
+				width: this.chartWidth,
+				interpolateNulls: true,
+				legend: legend,
+				backgroundColor: this.bgColor,
+				hAxis: hAxis,
+				vAxis: {
+					title: vAxisTitle,
+				}
+			},
+			formatters: this.headFormate
+		};
+		}
 	}
 
 	/**
@@ -485,6 +615,7 @@ export class DeviceAddComponent implements OnInit {
 					gridlines: {
 						count: 5
 					},
+
 				},
 				vAxis: {
 					title: 'Values',
@@ -519,6 +650,8 @@ export class DeviceAddComponent implements OnInit {
 		/*if (this.subscribed) {
 			return;
 		}*/
+		this.messages = this.stompService.subscribe('/topic/' + this.cpId + '-' + this.parentDeviceObject.uniqueId);
+		this.subscription = this.messages.subscribe(this.on_next);
 
 		this.messages = this.stompService.subscribe('/topic/' + this.cpId + '-' + this.parentDeviceObject.uniqueId + '-' + this.devicename);
 		this.subscription = this.messages.subscribe(this.on_next);
@@ -526,52 +659,59 @@ export class DeviceAddComponent implements OnInit {
 	}
 	public on_next = (message: Message) => {
 		let obj: any = JSON.parse(message.body);
-		let reporting_data = obj.data.data.reporting
-		//console.log("datss>>>:::",reporting_data)
-		this.isConnected = true;
-		let dates = obj.data.data.time;
-		 let now = moment();	
-		if (obj.data.data.status != 'off' && obj.data.data.status != 'on' ) {	
-			this.options = {
-				type: 'line',
-				scales: {
+		if (obj.data.msgType === 'telemetry') {
+			let reporting_data = obj.data.data.reporting
+			this.isConnected = true;
+			let dates = obj.data.data.time;
+			let now = moment();
+			if (obj.data.data.status != 'off' && obj.data.data.status != 'on') {
+				this.options = {
+					type: 'line',
+					scales: {
 
-					xAxes: [{
-						type: 'realtime',
-						time: {
-							stepSize: 10
-						},
-						realtime: {
-							duration: 90000,
-							refresh: 7000,
-							delay: 2000,
-							onRefresh: function (chart: any) {
-								const getNestedObject = (nestedObj, pathArr) => {
-									return pathArr.reduce((obj, key) =>
-										(obj && obj[key] !== 'undefined') ? obj[key] : undefined, nestedObj);
+						xAxes: [{
+							type: 'realtime',
+							time: {
+								stepSize: 10
+							},
+							realtime: {
+								duration: 90000,
+								refresh: 7000,
+								delay: 2000,
+								onRefresh: function (chart: any) {
+									const getNestedObject = (nestedObj, pathArr) => {
+										return pathArr.reduce((obj, key) =>
+											(obj && obj[key] !== 'undefined') ? obj[key] : undefined, nestedObj);
+									}
+									if (obj.data.data.status != 'on') {
+										chart.data.datasets.forEach(function (dataset: any) {
+											var labeldata = dataset.label
+											var kbc = getNestedObject(reporting_data, labeldata.split("."));
+											dataset.data.push({
+
+												x: now,
+
+												y: kbc
+
+											});
+
+										});
+									}
 								}
-								if(obj.data.data.status != 'on'){
-								chart.data.datasets.forEach(function (dataset: any) {
-									var labeldata = dataset.label
-									var kbc = getNestedObject(reporting_data, labeldata.split("."));		
-									dataset.data.push({
 
-										x: now,
-
-										y: kbc
-
-									});
-								
-								});
 							}
-							}
-
-						}
-					}]
-				}
-			};
+						}]
+					}
+				};
+			}
+			obj.data.data.time = now;
+		} else if (obj.data.msgType === 'simulator' || obj.data.msgType === 'device') {
+			if (obj.data.data.status === 'off') {
+				this.isConnected = false;
+			} else {
+				this.isConnected = true;
+			}
 		}
-		obj.data.data.time = now;
 		/*var colorNames = Object.keys(this.chartColors);
 		var colorName = colorNames[this.datasets.length % colorNames.length];
 		var newColor = this.chartColors[colorName];
@@ -613,12 +753,18 @@ export class DeviceAddComponent implements OnInit {
 
 		this.spinner.show();
 		let getParentDeviceDetails = this.gatewayService.getgatewayDetails(deviceGuid);
+
+
+
 		let getGreenHouseLookup = this.gatewayService.getGreenHouseLookup();
 		let getTemplateLookup = this.gatewayService.getTemplateLookup();
 		// capture response until all the APIs got success
 		forkJoin([getParentDeviceDetails, getGreenHouseLookup, getTemplateLookup])
 			.subscribe(response => {
 				this.setParentDeviceDetails(response[0]);
+				if (response[0].data['uniqueId']) {
+					this.getDeviceStatus(response[0].data['uniqueId']);
+				}
 				this.setGreenHouseLookup(response[1]);
 				this.setTemplateLookup(response[2]);
 				this.spinner.hide();
@@ -633,20 +779,6 @@ export class DeviceAddComponent implements OnInit {
 
 
 
-	getDevicestatics() {
-		this.spinner.show();
-		this.deviceService.getdevicestatics(this.parentDeviceGuid).subscribe(response => {
-			if (response.isSuccess === true) {
-				this.spinner.hide();
-				this.curentstaticsObject = response.data;
-			} else {
-				this._notificationService.add(new Notification('error', response.message));
-			}
-		}, error => {
-			this.spinner.hide();
-			this._notificationService.add(new Notification('error', error));
-		});
-	}
 
 	/**
 	 * set parent device details
@@ -775,7 +907,7 @@ export class DeviceAddComponent implements OnInit {
 			if (response.isSuccess === true && response.data.items != '') {
 				//this.totalRecords = response.data.count;
 				this.datadevice = response.data.items;
-				this.devicename = response.data.items[0].name
+				this.devicename = response.data.items[0].uniqueId
 				this.cId = response.data.items[0].guid
 				this.getDeviceData();
 			}
@@ -790,7 +922,7 @@ export class DeviceAddComponent implements OnInit {
 	}
 	getchilddevice(chiddeviceId) {
 		let obj = this.datadevice.find(o => o.guid === chiddeviceId);
-		this.devicename = obj.name;
+		this.devicename = obj.uniqueId;
 		this.spinner.show();
 		this.deviceService.getdevicesensor(chiddeviceId, this.parentDeviceObject.templateGuid).subscribe(response => {
 			if (response.isSuccess === true) {
@@ -818,7 +950,12 @@ export class DeviceAddComponent implements OnInit {
 				// });
 				this.datasets = temp;
 				//this.getStompConfig();
-				this.stompSubscribe()
+				//this.stompSubscribe()
+				this.subscription.unsubscribe();
+				//this.messages = this.stompService.subscribe('/topic/' + this.cpId + '-' + this.sensorNamedata);
+				this.messages = this.stompService.subscribe('/topic/' + this.cpId + '-' + this.parentDeviceObject.uniqueId + '-' + this.devicename);
+				this.subscription = this.messages.subscribe(this.on_next);
+				this.subscribed = true;
 			} else {
 				this._notificationService.add(new Notification('error', response.message));
 			}

@@ -104,7 +104,7 @@
               <fieldset class="form-group form-field">
                 <label class="form-label">Zip Code<b>*</b></label>
                 <mat-form-field>
-                  <input matInput name="zipcode" formControlName="zipcode" type="text" maxlength="6"
+                  <input matInput name="zipcode" formControlName="zipcode" type="text" maxlength="7"
                          [(ngModel)]="greenhouseObject['zipcode']" class="form-control" placeholder="Zip Code">
                   <div class="form-control-feedback" *ngIf="greenHouseForm.controls['zipcode'].errors">
                     <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
@@ -175,24 +175,30 @@
                 </mat-form-field>
               </fieldset>
             </div>
-            <div class="col-md-3">
-              <fieldset class="form-group">
-                <img alt="" class="img-fluid"
-                     src="{{greenhouseObject['image'] == '00000000-0000-0000-0000-000000000000' || greenhouseObject['image'] == null ? _appConstant.noImg: mediaUrl + greenhouseObject['image']}}" />
-              </fieldset>
-            </div>
-            <div class="col-md-3" style="padding-top: 30px;">
-              <fieldset class="form-group">
-                <input formControlName="imageFile" (change)="handleImageInput($event)" class="upload-image"
-                       type="file" />
+          <div class="col-md-6">
+            <fieldset class="form-group">
+              <label class="form-label">Select Image</label>
+              <div>
+                <label for="myFile" class="upload-file">
+                  <input formControlName="imageFile" id="myFile" #myFile (change)="handleImageInput($event)" class="upload-image"
+                         type="file" accept=".jpg, .jpeg, .png" />
+                </label>
                 <div class="form-control-feedback" *ngIf="greenHouseForm.controls['imageFile'].errors">
                   <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
                      *ngIf="greenHouseForm.controls['imageFile'].errors.required && checkSubmitStatus">
                     Upload Image
                   </p>
                 </div>
-              </fieldset>
-            </div>
+              </div>
+            </fieldset>
+            <fieldset class="form-group user-profle-image gh-add">
+              <img *ngIf="greenhouseObject['image']" (click)="imageRemove()" class="close-icn"
+                   src="../../../../assets/images/cancel-dashboard.svg" alt="">
+              <img alt="" class="img-fluid"
+                   src="{{greenhouseObject['image'] == '00000000-0000-0000-0000-000000000000' || greenhouseObject['image'] == null || greenhouseObject['image'] == '' ? _appConstant.noImg:  greenhouseObject['image']}}" />
+            </fieldset>
+            <p>{{fileName}}</p>
+          </div>
           </div>
           <div class="row mt-4 mb-0">
             <div class="col-lg-12">

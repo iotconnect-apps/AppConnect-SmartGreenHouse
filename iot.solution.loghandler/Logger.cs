@@ -15,8 +15,11 @@ namespace component.services.loghandler
     public class Logger //: ILogHandler
     {
         private static IEventBus _eventBus;
-        private static ServiceType _serviceType;
+        private static string _serviceType;
         private static bool _logging;
+        private static bool _warnLogging;
+        private static bool _infoLogging;
+        private static bool _debugLogging;
         private static string _applicationCode;
 
         public Logger(IEventBus eventBus, IOptions<DomainManager> domainManager)
@@ -24,6 +27,9 @@ namespace component.services.loghandler
             _eventBus = eventBus;
             _serviceType = domainManager.Value.ServiceType;
             _logging = domainManager.Value.Logging;
+            _warnLogging = domainManager.Value.WarnLogging;
+            _infoLogging = domainManager.Value.InfoLogging;
+            _debugLogging = domainManager.Value.DebugLogging;
             _applicationCode = domainManager.Value.ApplicationType.ToString();
         }
 
@@ -166,7 +172,7 @@ namespace component.services.loghandler
 
         public bool DebugLog(object message, dynamic request = null, string errorCode = "", string identity = "", [CallerFilePath] string fileName = "", [CallerMemberName] string methodName = "", ComponentStatus componentStatus = ComponentStatus.None, LogSeverity logSeverity = LogSeverity.Debug)
         {
-            if (!_logging)
+            if (!_logging || !_debugLogging)
                 return false;
 
             try
@@ -199,7 +205,7 @@ namespace component.services.loghandler
 
         public bool DebugLog(object message, ServiceType serviceType, dynamic request = null, string errorCode = "", string identity = "", [CallerFilePath] string fileName = "", [CallerMemberName] string methodName = "", ComponentStatus componentStatus = ComponentStatus.None, LogSeverity logSeverity = LogSeverity.Debug)
         {
-            if (!_logging)
+            if (!_logging || !_debugLogging)
                 return false;
 
             try
@@ -232,7 +238,7 @@ namespace component.services.loghandler
 
         public bool WarningLog(object message, dynamic request = null, string errorCode = "", string identity = "", [CallerFilePath] string fileName = "", [CallerMemberName] string methodName = "", ComponentStatus componentStatus = ComponentStatus.None, LogSeverity logSeverity = LogSeverity.Warn)
         {
-            if (!_logging)
+            if (!_logging || !_warnLogging)
                 return false;
 
             try
@@ -265,7 +271,7 @@ namespace component.services.loghandler
 
         public bool WarningLog(object message, ServiceType serviceType, dynamic request = null, string errorCode = "", string identity = "", [CallerFilePath] string fileName = "", [CallerMemberName] string methodName = "", ComponentStatus componentStatus = ComponentStatus.None, LogSeverity logSeverity = LogSeverity.Warn)
         {
-            if (!_logging)
+            if (!_logging || !_warnLogging)
                 return false;
 
             try
@@ -298,7 +304,7 @@ namespace component.services.loghandler
 
         public bool InfoLog(object message, dynamic request = null, string errorCode = "", string identity = "", [CallerFilePath] string fileName = "", [CallerMemberName] string methodName = "", ComponentStatus componentStatus = ComponentStatus.None, LogSeverity logSeverity = LogSeverity.Info)
         {
-            if (!_logging)
+            if (!_logging || !_infoLogging)
                 return false;
 
             try
@@ -329,7 +335,7 @@ namespace component.services.loghandler
 
         public bool InfoLog(object message, ServiceType serviceType, dynamic request = null, string errorCode = "", string identity = "", [CallerFilePath] string fileName = "", [CallerMemberName] string methodName = "", ComponentStatus componentStatus = ComponentStatus.None, LogSeverity logSeverity = LogSeverity.Info)
         {
-            if (!_logging)
+            if (!_logging || !_infoLogging)
                 return false;
 
             try
@@ -357,31 +363,31 @@ namespace component.services.loghandler
                 return false;
             }
         }
-       
-        public bool LostMessageLog(object message, Exception exception)
-        {
-            if (!_logging)
-                return false;
 
-            try
-            {
-                LostMessageNotification notification = new LostMessageNotification
-                {
-                    ReceiverId = (int)_serviceType,
-                    SenderId = ((BaseServiceBusModel)message)._ProducerId,
-                    Topic = Convert.ToString(((BaseServiceBusModel)message)._TopicName),
-                    EventId = Convert.ToString(((BaseServiceBusModel)message)._EventId),
-                    Message = message != null && ((BaseServiceBusModel)message)._OriginalMessage != null ? ((BaseServiceBusModel)message)._OriginalMessage : string.Empty,
-                    ExceptionDetail = exception != null ? JsonConvert.SerializeObject(exception) : string.Empty,
-                };
+        //public bool LostMessageLog(object message, Exception exception)
+        //{
+        //    if (!_logging)
+        //        return false;
 
-                return _eventBus.Publish(notification);
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
+        //    try
+        //    {
+        //        LostMessageNotification notification = new LostMessageNotification
+        //        {
+        //            ReceiverId = (int)_serviceType,
+        //            SenderId = ((BaseServiceBusModel)message)._ProducerId,
+        //            Topic = Convert.ToString(((BaseServiceBusModel)message)._TopicName),
+        //            EventId = Convert.ToString(((BaseServiceBusModel)message)._EventId),
+        //            Message = message != null && ((BaseServiceBusModel)message)._OriginalMessage != null ? ((BaseServiceBusModel)message)._OriginalMessage : string.Empty,
+        //            ExceptionDetail = exception != null ? JsonConvert.SerializeObject(exception) : string.Empty,
+        //        };
+
+        //        return _eventBus.Publish(notification);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return false;
+        //    }
+        //}
 
         public bool CronJobErrorLog(Exception exception, [CallerFilePath] string fileName = "", [CallerMemberName] string methodName = "", ComponentStatus componentStatus = ComponentStatus.None, LogSeverity logSeverity = LogSeverity.CronJobError)
         {

@@ -8,6 +8,7 @@ using System.Net;
 using Entity = iot.solution.entity;
 using host.iot.solution.Controllers;
 using component.helper;
+using host.iot.solution.Filter;
 
 namespace iot.solution.host.Controllers
 {
@@ -69,12 +70,13 @@ namespace iot.solution.host.Controllers
 
         [HttpPut]
         [Route(NotificationsRoute.Route.Delete, Name = NotificationsRoute.Name.Delete)]
-        public Entity.BaseResponse<bool> Delete(Guid id)
+        [EnsureGuidParameterAttribute("id", "Notification")]
+        public Entity.BaseResponse<bool> Delete(string id)
         {
             Entity.BaseResponse<bool> response = new Entity.BaseResponse<bool>(true);
             try
             {
-                var status = _service.Delete(id);
+                var status = _service.Delete(Guid.Parse(id));
                 response.IsSuccess = status.Success;
                 response.Message = status.Message;
                 response.Data = status.Success;
@@ -109,12 +111,13 @@ namespace iot.solution.host.Controllers
         }
         [HttpPost]
         [Route(NotificationsRoute.Route.UpdateStatus, Name = NotificationsRoute.Name.UpdateStatus)]
-        public Entity.BaseResponse<bool> UpdateStatus(Guid id, bool status)
+        [EnsureGuidParameterAttribute("id", "Notification")]
+        public Entity.BaseResponse<bool> UpdateStatus(string id, bool status)
         {
             Entity.BaseResponse<bool> response = new Entity.BaseResponse<bool>(true);
             try
             {
-                Entity.ActionStatus result = _service.UpdateStatus(id, status);
+                Entity.ActionStatus result = _service.UpdateStatus(Guid.Parse(id), status);
                 response.IsSuccess = result.Success;
                 response.Message = result.Message;
                 response.Data = result.Success;
@@ -127,12 +130,13 @@ namespace iot.solution.host.Controllers
         }
         [HttpGet]
         [Route(NotificationsRoute.Route.GetById, Name = NotificationsRoute.Name.GetById)]
-        public Entity.BaseResponse<Entity.SingleRuleResponse> Get(Guid id)
+        [EnsureGuidParameterAttribute("id", "Notification")]
+        public Entity.BaseResponse<Entity.SingleRuleResponse> Get(string id)
         {
             Entity.BaseResponse<Entity.SingleRuleResponse> response = new Entity.BaseResponse<Entity.SingleRuleResponse>(true);
             try
             {
-                response.Data = _service.Get(id);
+                response.Data = _service.Get(Guid.Parse(id));
             }
             catch (Exception ex)
             {

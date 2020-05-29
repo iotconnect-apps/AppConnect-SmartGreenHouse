@@ -18,7 +18,7 @@ BEGIN
 	WHERE [configKey] = 'telemetry-last-exectime' AND [isDeleted] = 0
 
 	BEGIN TRAN		
-		DELETE FROM [dbo].[TelemetrySummary_Daywise] WHERE CONVERT(DATE,[Date]) BETWEEN @lastExecDate AND @dt
+		DELETE FROM [dbo].[TelemetrySummary_Daywise] WHERE (CONVERT(DATE,[date]) BETWEEN CONVERT(DATE,@lastExecDate) AND CONVERT(DATE,@dt))  
 		
 		INSERT INTO [dbo].[TelemetrySummary_Daywise]([guid]
 		,[deviceGuid]
@@ -34,11 +34,12 @@ BEGIN
 		SELECT NEWID(), [guid], [Date], [localName], 0, 0, ValueCount, 0, 0
 		FROM (
 		-- To Get AVG Value of 'co2','currentin','feedpressure','humidity'
-		select D.[guid],A.localName, CONVERT(DATE,A.createdDate) [Date], AVG(CONVERT(BIGINT,attributeValue)) ValueCount
-		FROM [IOTConnect].[AttributeValue] A
-		INNER JOIN [dbo].[Device] D ON A.[uniqueId] = D.[uniqueId] AND D.[isDeleted] = 0
-		WHERE CONVERT(DATE,A.[createdDate])  BETWEEN @lastExecDate AND @dt AND A.localName IN ('co2','feedpressure','humidity','K','N','P')
-		GROUP BY D.[guid],A.localName, CONVERT(DATE,A.createdDate)
+		select D.[guid],KA.[code] AS [localName], CONVERT(DATE,A.createdDate) [Date], AVG(CONVERT(DECimal(18, 2),attributeValue)) ValueCount
+		FROM [IOTConnect].[AttributeValue] A (NOLOCK)
+		INNER JOIN [dbo].[Device] D (NOLOCK) ON A.[uniqueId] = D.[uniqueId] AND D.[isDeleted] = 0
+		INNER JOIN [dbo].[KitTypeAttribute] KA ON A.[localName] = (CASE WHEN CHARINDEX('.', KA.[localName]) > 0 THEN SUBSTRING(KA.[localName], CHARINDEX('.', KA.[localName]) + 1 , DATALENGTH(KA.[localName])) ELSE KA.[localName] END) AND D.[tag] = KA.[tag]
+		WHERE (CONVERT(DATE,A.[createdDate]) BETWEEN CONVERT(DATE,@lastExecDate) AND CONVERT(DATE,@dt)) AND KA.[code]  IN ('INTST','NUTRIENT','CO2','feedpressure','temp','moisture','humidity','K','N','P')
+		GROUP BY D.[guid],KA.[code], CONVERT(DATE,A.createdDate)
 		) A
 				
 		INSERT INTO [dbo].[TelemetrySummary_Daywise]([guid]
@@ -55,38 +56,19 @@ BEGIN
 		SELECT NEWID(), [guid], [Date], [localName], 0, 0, 0, 0, ValueCount
 		FROM (
 		-- To Get SUM of 'flowrate'
-		select D.[guid],A.localName, CONVERT(DATE,A.createdDate) [DATE], SUM(CONVERT(BIGINT,attributeValue)) ValueCount
-		FROM [IOTConnect].[AttributeValue] A
-		INNER JOIN [dbo].[Device] D ON A.[uniqueId] = D.[uniqueId] AND D.[isDeleted] = 0
-		WHERE CONVERT(DATE,A.[createdDate])  BETWEEN @lastExecDate AND @dt AND A.localName IN ('flowrate','currentin')
-		GROUP BY D.[guid],A.localName, CONVERT(DATE,A.createdDate)
+		select D.[guid],KA.[code] AS [localName], CONVERT(DATE,A.createdDate) [DATE], SUM(CONVERT(DECimal(18, 2),attributeValue)) ValueCount
+		FROM [IOTConnect].[AttributeValue] A (NOLOCK)
+		INNER JOIN [dbo].[Device] D (NOLOCK) ON A.[uniqueId] = D.[uniqueId] AND D.[isDeleted] = 0
+		INNER JOIN [dbo].[KitTypeAttribute] KA ON A.[localName] = KA.[localName] AND D.[tag] = KA.[tag]
+		WHERE (CONVERT(DATE,A.[createdDate]) BETWEEN CONVERT(DATE,@lastExecDate) AND CONVERT(DATE,@dt)) AND KA.[code] IN ('pumpCurrentIn','lightCurrentIn','FLOWRATE')
+		GROUP BY D.[guid],KA.[code], CONVERT(DATE,A.createdDate)
 		) A
-				
-		;WITH CTE
-		AS (
-		SELECT D.[guid],A.localName, CONVERT(DATE,A.createdDate) [DATE], CONVERT(BIGINT,attributeValue) [value], ROW_NUMBER() OVER (PARTITION BY A.[uniqueId],A.localName ORDER BY A.[createdDate] DESC) [no]
-		FROM [IOTConnect].[AttributeValue] A
-		INNER JOIN [dbo].[Device] D ON A.[uniqueId] = D.[uniqueId] AND D.[isDeleted] = 0
-		WHERE CONVERT(DATE,A.[createdDate])  BETWEEN @lastExecDate AND @dt AND A.localName IN ('intst','moisture','temp')
-		)
-
-		INSERT INTO [dbo].[TelemetrySummary_Daywise]([guid]
-		,[deviceGuid]
-		,[date]
-		,[attribute]
-		,[min]
-		,[max]
-		,[avg]
-		,[latest]
-		,[sum]
-		)
 		
-		SELECT NEWID(), [guid], [Date], [localName], 0, 0, 0, [value], 0
-		FROM (
-		-- To Get Latest Values of 'intst','K','moisture','N','P','temp'
-		SELECT [guid],[localName],[DATE],[value] from CTE WHERE [no] = 1
-		) A
-	  
+		UPDATE C 
+		SET [value] = convert(nvarchar(50),@dt,121)
+		FROM [dbo].[Configuration] C 
+		WHERE [configKey] = 'telemetry-last-exectime' AND [isDeleted] = 0
+				
 	COMMIT TRAN	
 
 	END TRY 	

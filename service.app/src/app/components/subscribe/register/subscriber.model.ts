@@ -78,11 +78,11 @@ export class RequestSubscriberFormModel {
   // postalCode: string;
 
   @prop()
-  @maxLength({ value: 6, message: 'You have reached the maximum character limit for this field.' })
+  @maxLength({ value: 7, message: 'You have reached the maximum character limit for this field.' })
   @required({ message: "Please enter Postal Code" })
   @pattern({
     expression: {
-      'companyPostalCode': /^[0-9]/
+      'companyPostalCode': /^[A-Z0-9 _]/
     }, message: "Please enter valid Postal Code"
   })
   // @alphaNumeric({ allowWhiteSpace: true, message: "Please enter valid Postal code" })

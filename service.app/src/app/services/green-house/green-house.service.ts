@@ -61,6 +61,11 @@ export class GreenHouseService {
 			return response;
 		});
 	}
+	removeGHImage(entityId) {
+		return this.httpClient.put<any>(this.apiServer.baseUrl + 'api/greenhouse/deleteimage/'+entityId,{}).map(response => {
+		  return response;
+		});
+	  }
 	addGreenhouse(data) {
 
 		const formData = new FormData();

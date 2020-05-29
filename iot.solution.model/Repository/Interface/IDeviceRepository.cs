@@ -20,5 +20,6 @@ namespace iot.solution.model.Repository.Interface
         List<Response.GreenHouseDevicesResponse> GetGreenHouseDevices(Guid? greenhouseId, Guid? deviceId);
         Entity.BaseResponse<int> ValidateKit(string kitCode);
         Entity.BaseResponse<List<Entity.KitDevice>> ProvisionKit(Entity.ProvisionKitRequest request);
+        Entity.BaseResponse<List<Response.DeviceDetailResponse>> GetStatistics(Guid deviceId);
     }
 }

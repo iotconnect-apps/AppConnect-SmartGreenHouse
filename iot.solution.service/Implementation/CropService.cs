@@ -57,46 +57,72 @@ namespace iot.solution.service.Implementation
                 Entity.ActionStatus actionStatus = null;
                 if (crop.Guid == null || crop.Guid == Guid.Empty)
                 {
-                    dbCrop.Guid = Guid.NewGuid();
-                    if (crop.ImageFile != null)
+                    var greehouseCrop = _cropRepository.FindBy(t => t.Name.Trim().Equals(crop.Name.Trim()) && t.GreenHouseGuid == crop.GreenhouseGuid && !t.IsDeleted).FirstOrDefault();
+                    if (greehouseCrop == null)
                     {
-                        // upload image                                     
-                        dbCrop.Image = SaveCropImage(dbCrop.Guid, crop.ImageFile);
+                        dbCrop.Guid = Guid.NewGuid();
+                        if (crop.ImageFile != null)
+                        {
+                            // upload image                                     
+                            dbCrop.Image = SaveCropImage(dbCrop.Guid, crop.ImageFile);
+                        }
+                        dbCrop.CompanyGuid = component.helper.SolutionConfiguration.CompanyId;
+                        dbCrop.CreatedDate = DateTime.Now;
+                        dbCrop.CreatedBy = component.helper.SolutionConfiguration.CurrentUserId;
+                        actionStatus = _cropRepository.Insert(dbCrop);
+                        actionStatus.Data = Mapper.Configuration.Mapper.Map<Model.Crop, Entity.Crop>(actionStatus.Data);
                     }
-                    dbCrop.CompanyGuid = component.helper.SolutionConfiguration.CompanyId;
-                    dbCrop.CreatedDate = DateTime.Now;
-                    dbCrop.CreatedBy = component.helper.SolutionConfiguration.CurrentUserId;
-                    actionStatus = _cropRepository.Insert(dbCrop);
-                    actionStatus.Data = Mapper.Configuration.Mapper.Map<Model.Crop, Entity.Crop>(actionStatus.Data);
+                    else {
+                        return new Entity.ActionStatus
+                        {
+                            Success = false,
+                            Message = "Crop name already exists!",
+                            Data=null
+                        };
+                    }
                 }
                 else
                 {
                     var uniqGreenhouse = _cropRepository.GetByUniqueId(x => x.Guid == dbCrop.Guid);
                     if (uniqGreenhouse == null)
                         throw new NotFoundCustomException($"{CommonException.Name.NoRecordsFound} : Crop");
-                    if (crop.ImageFile != null)
+                    var greehouseCrop = _cropRepository.FindBy(t => t.Name.Trim().Equals(crop.Name.Trim()) && t.Guid!=dbCrop.Guid && t.GreenHouseGuid == crop.GreenhouseGuid && !t.IsDeleted).FirstOrDefault();
+                    if (greehouseCrop == null)
                     {
-                        if (File.Exists(component.helper.SolutionConfiguration.UploadBasePath + uniqGreenhouse.Image) && crop.ImageFile.Length > 0)
+                        if (crop.ImageFile != null)
                         {
-                            //if already exists image then delete  old image from server
-                            File.Delete(component.helper.SolutionConfiguration.UploadBasePath + uniqGreenhouse.Image);
+                            if (File.Exists(component.helper.SolutionConfiguration.UploadBasePath + uniqGreenhouse.Image) && crop.ImageFile.Length > 0)
+                            {
+                                //if already exists image then delete  old image from server
+                                File.Delete(component.helper.SolutionConfiguration.UploadBasePath + uniqGreenhouse.Image);
+                            }
+                            if (crop.ImageFile.Length > 0)
+                            {
+                                // upload new image                                     
+                                dbCrop.Image = SaveCropImage(dbCrop.Guid, crop.ImageFile);
+                            }
                         }
-                        if (crop.ImageFile.Length > 0)
+                        else
                         {
-                            // upload new image                                     
-                            dbCrop.Image = SaveCropImage(dbCrop.Guid, crop.ImageFile);
+                            dbCrop.Image = uniqGreenhouse.Image;
                         }
+                        dbCrop.CreatedDate = uniqGreenhouse.CreatedDate;
+                        dbCrop.CreatedBy = uniqGreenhouse.CreatedBy;
+                        dbCrop.UpdatedDate = DateTime.Now;
+                        dbCrop.UpdatedBy = component.helper.SolutionConfiguration.CurrentUserId;
+                        dbCrop.CompanyGuid = component.helper.SolutionConfiguration.CompanyId;
+                        actionStatus = _cropRepository.Update(dbCrop);
+                        actionStatus.Data = Mapper.Configuration.Mapper.Map<Model.Crop, Entity.Crop>(actionStatus.Data);
                     }
-                    else { 
-                        dbCrop.Image = uniqGreenhouse.Image;
+                    else
+                    {
+                        return new Entity.ActionStatus
+                        {
+                            Success = false,
+                            Message = "Crop name already exists!",
+                            Data = null
+                        };
                     }
-                    dbCrop.CreatedDate = uniqGreenhouse.CreatedDate;
-                    dbCrop.CreatedBy = uniqGreenhouse.CreatedBy;
-                    dbCrop.UpdatedDate = DateTime.Now;
-                    dbCrop.UpdatedBy = component.helper.SolutionConfiguration.CurrentUserId;
-                    dbCrop.CompanyGuid = component.helper.SolutionConfiguration.CompanyId;
-                    actionStatus = _cropRepository.Update(dbCrop);
-                    actionStatus.Data = Mapper.Configuration.Mapper.Map<Model.Crop, Entity.Crop>(actionStatus.Data);
                 }
                 return actionStatus;
             }
@@ -131,6 +157,17 @@ namespace iot.solution.service.Implementation
             }
             return null;
         }
+        // Delete Image on Server   
+        private bool DeleteEntityImage(Guid guid, string imageName)
+        {
+            var fileBasePath = SolutionConfiguration.UploadBasePath + SolutionConfiguration.CropImageBasePath;
+            var filePath = Path.Combine(fileBasePath, imageName);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            return true;
+        }
         public Entity.ActionStatus Delete(Guid id)
         {
             try
@@ -153,6 +190,51 @@ namespace iot.solution.service.Implementation
                     Message = ex.Message
                 };
             }
+        }
+        public Entity.ActionStatus DeleteImage(Guid id)
+        {
+            Entity.ActionStatus actionStatus = new Entity.ActionStatus(false);
+            try
+            {
+                var dbEntity = _cropRepository.FindBy(x => x.Guid.Equals(id)).FirstOrDefault();
+                if (dbEntity == null)
+                {
+                    throw new NotFoundCustomException($"{CommonException.Name.NoRecordsFound} : Entity");
+                }
+
+                bool deleteStatus = DeleteEntityImage(id, dbEntity.Image);
+                if (deleteStatus)
+                {
+                    dbEntity.Image = "";
+                    dbEntity.UpdatedDate = DateTime.Now;
+                    dbEntity.UpdatedBy = SolutionConfiguration.CurrentUserId;
+                    dbEntity.CompanyGuid = SolutionConfiguration.CompanyId;
+
+                    actionStatus = _cropRepository.Update(dbEntity);
+                    actionStatus.Data = Mapper.Configuration.Mapper.Map<Model.Crop, Entity.Crop>(actionStatus.Data);
+                    actionStatus.Success = true;
+                    actionStatus.Message = "Image deleted successfully!";
+                    if (!actionStatus.Success)
+                    {
+                        _logger.ErrorLog(new Exception($"Entity is not updated in database, Error: {actionStatus.Message}"));
+                        actionStatus.Success = false;
+                        actionStatus.Message = actionStatus.Message;
+                    }
+                }
+                else
+                {
+                    actionStatus.Success = false;
+                    actionStatus.Message = "Image not deleted!";
+                }
+                return actionStatus;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+                actionStatus.Success = false;
+                actionStatus.Message = ex.Message;
+            }
+            return actionStatus;
         }
         public Entity.ActionStatus UpdateStatus(Guid id, bool status)
         {

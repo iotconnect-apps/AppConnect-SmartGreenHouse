@@ -3,11 +3,11 @@
     [deviceGuid] UNIQUEIDENTIFIER NOT NULL,
     [date]       DATETIME         NOT NULL,
     [attribute]  NVARCHAR (1000)  NULL,
-    [min]        INT              NULL,
-    [max]        INT              NULL,
-    [avg]        INT              NULL,
-    [latest]     INT              NULL,
-    [sum]        BIGINT           NULL,
+    [min]        DECIMAL(18, 2)              NULL,
+    [max]        DECIMAL(18, 2)              NULL,
+    [avg]        DECIMAL(18, 2)              NULL,
+    [latest]     DECIMAL(18, 2)              NULL,
+    [sum]        DECIMAL(18, 2)           NULL,
     PRIMARY KEY CLUSTERED ([guid] ASC)
 );
 

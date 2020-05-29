@@ -12,7 +12,7 @@ namespace component.eventbus.Common
         /// <summary>
         /// The service type
         /// </summary>
-        public ServiceType ServiceType;
+        public string ServiceType;
 
         /// <summary>
         /// The domain configuration
@@ -23,10 +23,21 @@ namespace component.eventbus.Common
         /// The logging
         /// </summary>
         public bool Logging = true;
-
+        /// <summary>
+        /// The logging
+        /// </summary>
+        public bool InfoLogging = false;
+        /// <summary>
+        /// The logging
+        /// </summary>
+        public bool WarnLogging = true;
+        /// <summary>
+        /// The logging
+        /// </summary>
+        public bool DebugLogging = true;
         /// <summary>
         /// The application code
         /// </summary>
-        public ApplicationType ApplicationType;
+        public string ApplicationType;
     }
 }

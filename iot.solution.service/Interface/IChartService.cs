@@ -8,8 +8,10 @@ namespace iot.solution.service.Interface
 {
     public interface IChartService
     {
-        List<Response.WaterUsageResponse> GetWaterUsage(Request.ChartRequest request);
-        List<Response.EnergyUsageResponse> GetEnergyUsage(Request.ChartRequest request);
-        List<Response.SoilNutritionResponse> GetSoilNutrition(Request.ChartRequest request);
+        Entity.ActionStatus TelemetrySummary_DayWise();
+        Entity.ActionStatus TelemetrySummary_HourWise();
+        Entity.BaseResponse<List<Response.WaterUsageResponse>> GetWaterUsage(Request.ChartRequest request);
+        Entity.BaseResponse<List<Response.EnergyUsageResponse>> GetEnergyUsage(Request.ChartRequest request);
+        Entity.BaseResponse<List<Response.SoilNutritionResponse>> GetSoilNutrition(Request.ChartRequest request);
     }
 }

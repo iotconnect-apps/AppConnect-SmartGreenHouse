@@ -1,50 +1,55 @@
 <Configuration>
   <SolutionName>Smart Greenhouse</SolutionName>
-  <SolutionKey>MzQyMTVEQUYtMzk1RS00MThBLUFDMkEtQTgxQkQ1MDE5NDRFLWFjY2Vzc0tFWS1kMmVpdDF1ZTg2</SolutionKey>
-  <EnvironmentCode>QA</EnvironmentCode>
+  <SolutionKey></SolutionKey>
+  <EnvironmentCode></EnvironmentCode>
   <SubscriptionAPI>
-    <BaseUrl>https://uat-connectstudio-api-subscription-wi.azurewebsites.net/api/v1/</BaseUrl>
-    <ClientID>267cad17-ca67-46e2-8bb4-e8bfce9dea7a</ClientID>
-    <ClientSecret>D22220A8-AC79-4567-BDDF-CE2A266C8FA1</ClientSecret>
-    <SolutionCode>PROD00001</SolutionCode>
-    <UserName>amit.softweb@yopmail.com</UserName>
-    <StripeAPIKey>pk_test_iXpWOt5rnbBVeCROKRYrHRnP004AKPu7pP</StripeAPIKey>
+    <BaseUrl></BaseUrl>
+    <ClientID></ClientID>
+    <ClientSecret></ClientSecret>
+    <SolutionCode></SolutionCode>
+    <UserName></UserName>
+    <StripeAPIKey></StripeAPIKey>
   </SubscriptionAPI>
-  <Messaging>
-    <ServicebusEndPoint>Endpoint=sb://qa-solution-servicebus-cu.servicebus.windows.net/;SharedAccessKeyName=smart-greenhouse-policy-qa;SharedAccessKey=JvSfWr8hJWzmm6JHqrR+myGzvPtqEE4OBYUeeBMfrLk=</ServicebusEndPoint>
-    <TopicName>smart-greenhouse-qa</TopicName>
-    <SubscriptionName>smart-greenhouse-sub-dev</SubscriptionName>
+  <Messaging> <!-- Provide Azure Service bus endpoint information if you wish to sync data between your solution and IoTConnect -->
+    <ServicebusEndPoint></ServicebusEndPoint>
+    <TopicName></TopicName>
+    <SubscriptionName></SubscriptionName>
   </Messaging>
-  <Token>
-    <Issuer>http://localhost:52617</Issuer>
-    <Audience>http://localhost:52617</Audience>
+  <Token> <!-- Token informatation -->
+    <Issuer></Issuer>
+    <Audience></Audience>
     <SecurityKey>GreenHouse_IOT_Solution</SecurityKey>
   </Token>
-  <Logger>
-    <BrokerConnection>Endpoint=sb://qa-solution-servicebus-cu.servicebus.windows.net/;SharedAccessKeyName=solution-logs-policy-qa;SharedAccessKey=Vb63VVCCpb1Z6BoyyIw6tGTxm7HW5KGr9lXdaOdfERc=</BrokerConnection>
+  <Logger> <!-- Provide Service bus endpoint -->
+    <BrokerConnection></BrokerConnection>
+    <SolutionName>Greenhouse</SolutionName>
   </Logger>
+  <HangFire>
+    <Enabled></Enabled> <!-- Values : True/False -->
+    <TelemetryHours>4</TelemetryHours>
+  </HangFire>
   <IOTConnectSettings>
     <IOTConnectSetting>
       <SettingType>LiveData</SettingType>
-      <Host>stompqa.iotconnect.io</Host>
-      <Vhost>qatelemetry</Vhost>
-      <User>teletestpub</User>
-      <Password>softweb#123</Password>
-      <Port>61614</Port>
+      <Host></Host>
+      <Vhost></Vhost>
+      <User></User>
+      <Password></Password>
+      <Port></Port>
       <IsSecure>1</IsSecure>
-      <Url>wss://stompqa.iotconnect.io/ws</Url>
+      <Url></Url>
     </IOTConnectSetting>
     <IOTConnectSetting>
       <SettingType>UIAlert</SettingType>
-      <Host>stompqa.iotconnect.io</Host>
-      <Vhost>ui-alert</Vhost>
-      <User>teletestpub</User>
-      <Password>softweb#123</Password>
-      <Port>61614</Port>
+      <Host></Host>
+      <Vhost></Vhost>
+      <User></User>
+      <Password></Password>
+      <Port></Port>
       <IsSecure>1</IsSecure>
-      <Url>wss://stompqa.iotconnect.io/ws</Url>
+      <Url></Url>
     </IOTConnectSetting>
   </IOTConnectSettings>
-  <!--40.113.196.248-->
-  <ConnectionString>data source=qa-solution-vm\SQLEXPRESS2017;initial catalog=dev-greenhouse;user id=devuser;password=softweb#123;MultipleActiveResultSets=True;</ConnectionString>
+  <!--SQL server Database connection string -->
+  <ConnectionString></ConnectionString>
 </Configuration>

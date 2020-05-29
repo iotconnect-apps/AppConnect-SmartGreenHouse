@@ -1,4 +1,5 @@
 ﻿using component.helper;
+using host.iot.solution.Filter;
 using iot.solution.entity.Structs.Routes;
 using iot.solution.service.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -39,12 +40,13 @@ namespace host.iot.solution.Controllers
 
         [HttpGet]
         [Route(UserRoute.Route.GetById, Name = UserRoute.Name.GetById)]
-        public Entity.BaseResponse<Entity.User> Get(Guid id)
+        [EnsureGuidParameterAttribute("id", "User")]
+        public Entity.BaseResponse<Entity.User> Get(string id)
         {
             Entity.BaseResponse<Entity.User> response = new Entity.BaseResponse<Entity.User>(true);
             try
             {
-                response.Data = _service.Get(id);
+                response.Data = _service.Get(Guid.Parse(id));
             }
             catch (Exception ex)
             {
@@ -76,7 +78,8 @@ namespace host.iot.solution.Controllers
 
         [HttpPut]
         [Route(UserRoute.Route.Delete, Name = UserRoute.Name.Delete)]
-        public Entity.BaseResponse<bool> Delete(Guid id)
+        [EnsureGuidParameterAttribute("id", "User")]
+        public Entity.BaseResponse<bool> Delete(string id)
         {
             Entity.BaseResponse<bool> response = new Entity.BaseResponse<bool>(true);
             try
@@ -84,7 +87,7 @@ namespace host.iot.solution.Controllers
                 if (id.Equals(SolutionConfiguration.CurrentUserId)) {
                     return new Entity.BaseResponse<bool>(false, "You can't delete your own account!");
                 }
-                var status = _service.Delete(id);
+                var status = _service.Delete(Guid.Parse(id));
                 response.IsSuccess = status.Success;
                 response.Message = status.Message;
                 response.Data = status.Success;
@@ -99,7 +102,8 @@ namespace host.iot.solution.Controllers
 
         [HttpPost]
         [Route(UserRoute.Route.UpdateStatus, Name = UserRoute.Name.Status)]
-        public Entity.BaseResponse<bool> UpdateStatus(Guid id, bool status)
+        [EnsureGuidParameterAttribute("id", "User")]
+        public Entity.BaseResponse<bool> UpdateStatus(string id, bool status)
         {
             Entity.BaseResponse<bool> response = new Entity.BaseResponse<bool>(true);
             try
@@ -108,7 +112,7 @@ namespace host.iot.solution.Controllers
                     {
                         return new Entity.BaseResponse<bool>(false, "You can't change your own status!");
                     }
-                Entity.ActionStatus result = _service.UpdateStatus(id, status);
+                Entity.ActionStatus result = _service.UpdateStatus(Guid.Parse(id), status);
                 response.IsSuccess = result.Success;
                 response.Message = result.Message;
                 response.Data = result.Success;
@@ -152,6 +156,7 @@ namespace host.iot.solution.Controllers
             }
             catch (Exception ex)
             {
+                base.LogException(ex);
                 return new Entity.BaseResponse<Entity.SearchResult<List<Entity.UserResponse>>>(false, ex.Message);
             }
             return response;

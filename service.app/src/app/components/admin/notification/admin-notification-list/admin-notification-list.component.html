@@ -17,7 +17,7 @@
             <app-search-render [searchValue]="searchText" (searchEvent)="searchTextCallback($event)">
             </app-search-render>
         </div>
-        <div class="p-l-20"><button type="button" [routerLink]="['/admin/notification/add']" mat-flat-button
+        <div class="p-l-20"><button type="button" [routerLink]="['/admin/notifications/add']" mat-flat-button
                 color="primary" class="text-white" title="Add Notification">Add Notification</button></div>
     </div>
 </section>
@@ -37,7 +37,7 @@
 
                     <div class="grid-inner-flex d-flex align-items-center">
                         <div class="user-detail-box">
-                            <h3 class="user-name"><a [routerLink]="['/admin/notification',notfication['guid']]"
+                            <h3 class="user-name"><a [routerLink]="['/admin/notifications',notfication['guid']]"
                                     href="javascript:void();">{{notfication['name']}}</a></h3>
                             <p class="user-details">Type :
                                 <span>{{(notfication['ruleType'] === 1)? 'Standard':'Smart'}}</span></p>
@@ -47,7 +47,7 @@
                     </div>
                     <div class="user-actions d-flex flex-wrap">
                         <div class="user-actions-cta text-center ng-star-inserted">
-                            <a class="green" [routerLink]="['/admin/notification',notfication['guid']]">
+                            <a class="green" [routerLink]="['/admin/notifications',notfication['guid']]">
                                 <img alt="Edit" src="../../../assets/images/icon-edit.svg">
                             </a>
                         </div>

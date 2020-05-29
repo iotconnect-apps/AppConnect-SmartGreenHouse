@@ -371,6 +371,13 @@
                                         <mat-option value="{{role['value']}}" *ngFor="let role of roleList">
                                             {{role['text']}}</mat-option>
                                     </mat-select>
+                                     <div class="form-control-feedback"
+                                           *ngIf="postForm.controls['roles'].errors">
+                                        <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                                           *ngIf="postForm.controls['roles'].errors.required && checkSubmitStatus">
+                                          Please select Role
+                                        </p>
+                                      </div>
                                 </mat-form-field>
                             </fieldset>
                         </div>
@@ -383,6 +390,13 @@
                                         <mat-option value="{{user['value']}}" *ngFor="let user of userList">
                                             {{user['text']}}</mat-option>
                                     </mat-select>
+                                     <div class="form-control-feedback"
+                                           *ngIf="postForm.controls['users'].errors">
+                                        <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                                           *ngIf="postForm.controls['users'].errors.required && checkSubmitStatus">
+                                          Please select User
+                                        </p>
+                                      </div>
                                 </mat-form-field>
                             </fieldset>
                         </div>

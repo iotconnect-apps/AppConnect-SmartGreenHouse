@@ -28,7 +28,7 @@ const appRoutes: Routes = [
 				canActivate: [AuthService]
 			},
 			{
-				path: 'subscriber/:email/:productCode/:companyId',
+				path: 'subscribers/:email/:productCode/:companyId',
 				component: SubscriberDetailComponent,
 				canActivate: [AuthService]
 			},
@@ -41,14 +41,19 @@ const appRoutes: Routes = [
 				path: 'hardwarekits',
 				component: HardwareListComponent,
 				canActivate: [AuthService]
-			},
+      },
+      {
+        path: 'hardwarekits/bulkupload',
+        component: BulkuploadAddComponent,
+        canActivate: [AuthService]
+      },
 			{
-				path: 'hardwarekit/add',
+				path: 'hardwarekits/add',
 				component: HardwareAddComponent,
 				canActivate: [AuthService]
 			},
 			{
-				path: 'hardwarekit/:hardwarekitGuid',
+				path: 'hardwarekits/:hardwarekitGuid',
 				component: HardwareAddComponent,
 				canActivate: [AuthService]
 			},
@@ -58,27 +63,22 @@ const appRoutes: Routes = [
 				canActivate: [AuthService]
 			},
 			{
-				path: 'user/add',
+				path: 'users/add',
 				component: AdminUserAddComponent,
 				canActivate: [AuthService]
 			},
 			{
-				path: 'user/:userGuid',
+				path: 'users/:userGuid',
 				component: AdminUserAddComponent,
 				canActivate: [AuthService]
 			},
 			{
-				path: 'bulkupload',
-				component: BulkuploadAddComponent,
-				canActivate: [AuthService]
-			},
-			{
-				path: 'notification/:notificationGuid',
+				path: 'notifications/:notificationGuid',
 				component: AdminNotificationAddComponent,
 				canActivate: [AuthService]
 			},
 			{
-				path: 'notification/add',
+				path: 'notifications/add',
 				component: AdminNotificationAddComponent,
 				canActivate: [AuthService]
 			},
@@ -137,11 +137,11 @@ const appRoutes: Routes = [
 		component: GreenHouseListComponent,
 		canActivate: [AdminAuthGuired]
 	}, {
-		path: 'user/:userGuid',
+		path: 'users/:userGuid',
 		component: UserAddComponent,
 		canActivate: [AdminAuthGuired]
 	}, {
-		path: 'user/add',
+		path: 'users/add',
 		component: UserAddComponent,
 		canActivate: [AdminAuthGuired]
 	}, {

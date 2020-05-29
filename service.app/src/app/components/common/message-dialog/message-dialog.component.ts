@@ -11,6 +11,7 @@ export class MessageDialogComponent implements OnInit {
   messageAlertDataModel: {
     title: string,
     message: string,
+    message2: string,
     okButtonName: string
   };
 

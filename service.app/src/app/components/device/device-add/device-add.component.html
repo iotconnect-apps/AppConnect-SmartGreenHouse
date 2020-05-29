@@ -2,8 +2,11 @@
 	<div class="col-xl-12 mb-4">
 		<div class="drag-body dashboard-widget h-100">
 			<div class="panel-heading">
-				<h5 class="panel-title"> <span *ngIf="parentDeviceObject">{{parentDeviceObject.name}}
-						[{{parentDeviceObject.uniqueId}}] </span></h5>
+				<h5 class="panel-title">
+					<div class="device-status" [ngClass]="(isConnected)?'on':'off'"></div>
+					<span *ngIf="parentDeviceObject">{{parentDeviceObject.name}}
+						[{{parentDeviceObject.uniqueId}}] </span>
+				</h5>
 				<div>
 					<a data-toggle="modal" href="#myModal" class="telemetry-link">
 						<img src="../../../assets/images/telemetry-icon.svg">
@@ -23,26 +26,23 @@
 								<div class="product-specification mb-2">
 									<h3 class="bold">Specifications</h3>
 									<ul class="m-0">
-										<li><span class="specification-title">Unique ID : </span>
+										<li><span class="specification-title">Unique ID  </span>
 											<span class="specification-desc">{{ parentDeviceObject.uniqueId }}</span>
 										</li>
-										<li><span class="specification-title">Display Name : </span>
+										<li><span class="specification-title">Display Name  </span>
 											<span class="specification-desc">{{ parentDeviceObject.name }}</span>
 
 										</li>
 										<li>
-											<span class="specification-title">Device Type : </span>
+											<span class="specification-title">Device Type  </span>
 											<span class="specification-desc">
 												{{ getIndexByValue(templateList, parentDeviceObject.templateGuid) }}
 											</span>
 										</li>
-										<li><span class="specification-title">Greenhouse : </span>
+										<li><span class="specification-title">Greenhouse  </span>
 											<span class="specification-desc">
 												{{ getIndexByValue(greenhouseList, parentDeviceObject.greenHouseGuid) }}
 											</span>
-										</li>
-										<li><span class="specification-title">Notes : </span>
-											<span class="specification-desc">{{ parentDeviceObject.note }}</span>
 										</li>
 									</ul>
 								</div>
@@ -56,13 +56,13 @@
 								<div class="current-statistics-wrapper d-flex align-items-center flex-wrap">
 									<div class="current-statistics-item media-item">
 										<div class="current-statistics-icon">
-											<img src="../../../../assets/images/energy-icon.svg" />
+											<img src="../../../../assets/images/pump-feed-pressure-icon.svg" />
 										</div>
 										<div class="current-statistics-text">
-											Energy Usages (kWh)
+											Pump Feed Pressure
 										</div>
-										<div class="current-statistics-data text-yellow">
-											{{curentstaticsObject.energyUsage}}
+										<div class="current-statistics-data text-maroon">
+											{{curentstaticsObject.feedpressure}}
 										</div>
 									</div>
 									<div class="current-statistics-item media-item">
@@ -72,8 +72,7 @@
 										<div class="current-statistics-text">
 											Temperature
 										</div>
-										<div class="current-statistics-data text-orange"
-											*ngIf="curentstaticsObject.temperature">
+										<div class="current-statistics-data text-orange">
 											{{curentstaticsObject.temperature}}<sup>0</sup>F
 										</div>
 									</div>
@@ -84,8 +83,7 @@
 										<div class="current-statistics-text">
 											Moisture
 										</div>
-										<div class="current-statistics-data text-blue"
-											*ngIf="curentstaticsObject.moisture">
+										<div class="current-statistics-data text-blue">
 											{{curentstaticsObject.moisture}}%
 										</div>
 									</div>
@@ -96,8 +94,7 @@
 										<div class="current-statistics-text">
 											Humidity
 										</div>
-										<div class="current-statistics-data text-green"
-											*ngIf="curentstaticsObject.humidity">
+										<div class="current-statistics-data text-green">
 											{{curentstaticsObject.humidity}}%
 										</div>
 									</div>
@@ -106,21 +103,21 @@
 											<img src="../../../../assets/images/water-icon.svg" />
 										</div>
 										<div class="current-statistics-text">
-											Water Usages (gal)
+											Water Flow Rate
 										</div>
 										<div class="current-statistics-data text-skyblue">
-											{{curentstaticsObject.waterUsage}}
+											{{curentstaticsObject.flowrate}}
 										</div>
 									</div>
 									<div class="current-statistics-item media-item">
 										<div class="current-statistics-icon">
-											<img src="../../../../assets/images/devices-total-icon.svg" />
+											<img src="../../../../assets/images/light-intensity-icon.svg" />
 										</div>
 										<div class="current-statistics-text">
-											Total Devices
+											Light Intensity
 										</div>
-										<div class="current-statistics-data text-gray">
-											{{curentstaticsObject.totalDevices}}
+										<div class="current-statistics-data text-purple">
+											{{curentstaticsObject.intst}}
 										</div>
 									</div>
 
@@ -142,32 +139,58 @@
 			</div>
 			<mat-card class="dashboard-card mat-card">
 				<!-- <img style="height: 300px;" src="../../../../assets/images/bar-graph-lg-2.jpg" /> -->
-				<google-chart *ngIf="chart['soilNutritions']['dataTable'].length" #cchart [data]="chart['soilNutritions']"></google-chart>
-				<div *ngIf="!chart['soilNutritions']['dataTable'].length" class="text-center d-flex align-items-center justify-content-center" style="height: 430px;">
+				<google-chart *ngIf="chart['soilNutritions']['dataTable'].length" #cchart
+					[data]="chart['soilNutritions']"></google-chart>
+				<div *ngIf="!chart['soilNutritions']['dataTable'].length"
+					class="text-center d-flex align-items-center justify-content-center" style="height: 480px;">
 					No data found
-				</div> 
+				</div>
 			</mat-card>
 		</div>
 	</div>
 	<div class="col-xl-4  mb-4">
 		<div class="drag-body dashboard-widget">
-				<div class="panel-heading">
-						<h5 class="panel-title"> Alerts </h5>
-						<div class="tab-link-bar">
-							<a [routerLink]="['/alerts']" [queryParams]="{deviceGuid:parentDeviceGuid}" href="javascript:;">View All</a>
+			<div class="panel-heading">
+				<h5 class="panel-title"> Alerts </h5>
+				<div class="tab-link-bar">
+					<a [routerLink]="['/alerts']" [queryParams]="{deviceGuid:parentDeviceGuid}" href="javascript:;">View
+						All</a>
+				</div>
+			</div>
+			<mat-card class="dashboard-card mat-card min-h-480">
+				<ul *ngIf="alerts.length>0" class="alerts-dashboard">
+					<li class="alert-{{alert['severity']}}" *ngFor="let alert of alerts">
+						<span class="alerts-date">{{getLocalDate(alert['eventDate'])}}</span>
+						<span class="alerts-info">{{alert.message}}</span>
+					</li>
+				</ul>
+				<div *ngIf="alerts.length==0" class="centerclass">No records found</div>
+				<div *ngIf="alerts.length>0" class="alert-indicator-wrapper">
+					<div class="alert-indicator-list">
+						<div class="alert-indicator Critical">
+							<span class="legend"></span>
+							<span class="alert-text">Critical</span>
+						</div>
+						<div class="alert-indicator Information">
+							<span class="legend"></span>
+							<span class="alert-text">Information</span>
+						</div>
+						<div class="alert-indicator Major">
+							<span class="legend"></span>
+							<span class="alert-text">Major</span>
+						</div>
+						<div class="alert-indicator Minor">
+							<span class="legend"></span>
+							<span class="alert-text">Minor</span>
+						</div>
+						<div class="alert-indicator Warning">
+							<span class="legend"></span>
+							<span class="alert-text">Warning</span>
 						</div>
 					</div>
-					<mat-card class="dashboard-card mat-card min-h-480">
-						<ul *ngIf="alerts.length>0" class="alerts-dashboard">
-							<li class="alert-{{alert['severity']}}" *ngFor="let alert of alerts">
-								<span class="alerts-date">{{alert['eventDate'] | date:'M/d/yy, h:mm:ss a'}}</span>
-								<span class="alerts-info">{{alert.message}}</span>
-							</li>
-						</ul>
-						<div *ngIf="alerts.length==0" class="centerclass">No records found</div>
-	
-					</mat-card>
-	
+				</div>
+			</mat-card>
+
 		</div>
 	</div>
 </div>
@@ -179,10 +202,12 @@
 			</div>
 			<mat-card class="dashboard-card mat-card">
 				<!-- <img style="height: 300px;" src="../../../../assets/images/bar-graph-lg-2.jpg" /> -->
-				<google-chart *ngIf="chart['energyConsumption']['dataTable'].length" #cchart [data]="chart['energyConsumption']"></google-chart>
-				<div *ngIf="!chart['energyConsumption']['dataTable'].length" class="text-center d-flex align-items-center justify-content-center" style="height: 300px;">
+				<google-chart *ngIf="chart['energyConsumption']['dataTable'].length" #cchart
+					[data]="chart['energyConsumption']"></google-chart>
+				<div *ngIf="!chart['energyConsumption']['dataTable'].length"
+					class="text-center d-flex align-items-center justify-content-center" style="height: 300px;">
 					No data found
-				</div> 
+				</div>
 			</mat-card>
 		</div>
 	</div>
@@ -193,10 +218,12 @@
 			</div>
 			<mat-card class="dashboard-card mat-card">
 				<!-- <img style="height: 300px;" src="../../../../assets/images/bar-graph-lg-2.jpg" /> -->
-				<google-chart *ngIf="chart['waterConsumption']['dataTable'].length" #cchart [data]="chart['waterConsumption']"></google-chart>
-				<div *ngIf="!chart['waterConsumption']['dataTable'].length" class="text-center d-flex align-items-center justify-content-center" style="height: 300px;">
+				<google-chart *ngIf="chart['waterConsumption']['dataTable'].length" #cchart
+					[data]="chart['waterConsumption']"></google-chart>
+				<div *ngIf="!chart['waterConsumption']['dataTable'].length"
+					class="text-center d-flex align-items-center justify-content-center" style="height: 300px;">
 					No data found
-				</div> 
+				</div>
 			</mat-card>
 		</div>
 	</div>

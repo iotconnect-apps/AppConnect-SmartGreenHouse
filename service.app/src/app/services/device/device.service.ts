@@ -3,7 +3,7 @@ import 'rxjs/add/operator/map'
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { CookieService } from 'ngx-cookie-service'
-import { ApiConfigService,NotificationService } from 'app/services';
+import { ApiConfigService, NotificationService } from 'app/services';
 
 
 
@@ -19,8 +19,8 @@ export class DeviceService {
 		private cookieService: CookieService,
 		private httpClient: HttpClient,
 		private _notificationService: NotificationService) {
-			this._notificationService.apiBaseUrl = this.apiServer.baseUrl;
-		}
+		this._notificationService.apiBaseUrl = this.apiServer.baseUrl;
+	}
 
 	getGatewayLookup() {
 
@@ -30,19 +30,19 @@ export class DeviceService {
 		});
 	}
 
-	 getsubcribesyncdata() {
+	getsubcribesyncdata() {
 
 
-	return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/subscriber/getlastsyncdetails').map(response => {
-		return response;
-	});
-}
+		return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/subscriber/getlastsyncdetails').map(response => {
+			return response;
+		});
+	}
 
 	getChildDevices(parentID, parameters) {
 
 		const parameter = {
 			params: {
-				'parentDeviceGuid' : parentID,
+				'parentDeviceGuid': parentID,
 				'pageNo': parameters.pageNo + 1,
 				'pageSize': parameters.pageSize,
 				'orderBy': parameters.sortBy
@@ -104,8 +104,8 @@ export class DeviceService {
 				'Content-Type': 'application/json'
 			}
 		};
-        return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/lookup/template', configHeader).map(response => {
-			
+		return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/lookup/template', configHeader).map(response => {
+
 			return response;
 		});
 		/*return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/lookup/alltemplate', configHeader).map(response => {
@@ -121,13 +121,13 @@ export class DeviceService {
 		};
 
 		return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/lookup/template', configHeader).map(response => {
-			
+
 			return response;
 		});
 	}
-	addUpdateHardwarekit(data,isEdit) {
-		
-		return this.httpClient.post<any>(this.apiServer.baseUrl + 'api/hardwarekit/manage?isEdit='+isEdit  , data ).map(response => {
+	addUpdateHardwarekit(data, isEdit) {
+
+		return this.httpClient.post<any>(this.apiServer.baseUrl + 'api/hardwarekit/manage?isEdit=' + isEdit, data).map(response => {
 			return response;
 		});
 	}
@@ -141,7 +141,7 @@ export class DeviceService {
 		const parameter = {
 			params: {
 				'isAssigned': parameters.isAssigned,
-				'pageNo': parameters.pageNo+ 1,
+				'pageNo': parameters.pageNo + 1,
 				'pageSize': parameters.pageSize,
 				'searchText': parameters.searchText,
 				'orderBy': parameters.sortBy
@@ -163,7 +163,7 @@ export class DeviceService {
 
 		const parameter = {
 			params: {
-				'pageNo': parameters.pageNo+ 1,
+				'pageNo': parameters.pageNo + 1,
 				'pageSize': parameters.pageSize,
 				'searchText': parameters.searchText,
 				'orderBy': parameters.sortBy
@@ -184,8 +184,8 @@ export class DeviceService {
 		});
 	}
 	uploadFile(data) {
-		
-		return this.httpClient.post<any>(this.apiServer.baseUrl + 'api/hardwarekit/verifykit' , data ).map(response => {
+
+		return this.httpClient.post<any>(this.apiServer.baseUrl + 'api/hardwarekit/verifykit', data).map(response => {
 			return response;
 		});
 	}
@@ -224,9 +224,9 @@ export class DeviceService {
 		};
 
 		const parameter = {
-      params: {
-        'companyID': parameters.companyID,
-				'pageNo': parameters.pageNo+ 1,
+			params: {
+				'companyID': parameters.companyID,
+				'pageNo': parameters.pageNo + 1,
 				'pageSize': parameters.pageSize,
 				'searchText': parameters.searchText,
 				'orderBy': parameters.sortBy
@@ -241,55 +241,72 @@ export class DeviceService {
 	}
 
 	uploadData(data) {
-		
-		return this.httpClient.post<any>(this.apiServer.baseUrl + 'api/hardwarekit/uploadkit' , data ).map(response => {
+
+		return this.httpClient.post<any>(this.apiServer.baseUrl + 'api/hardwarekit/uploadkit', data).map(response => {
 			return response;
 		});
 	}
 
-  /**
-   * Get List of device details for green house details
-   * @param greenhouseGuid
-   */
-  getDeviceDetailsList(greenhouseGuid) {
+	/**
+	 * Get List of device details for green house details
+	 * @param greenhouseGuid
+	 */
+	getDeviceDetailsList(greenhouseGuid) {
 
-    return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/device/getgreenhousedevicesdetails/' + greenhouseGuid).map(response => {
-      return response;
-    });
-  }
+		return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/device/getgreenhousedevicesdetails/' + greenhouseGuid).map(response => {
+			return response;
+		});
+	}
 
-  getDetailsdevice(deviceGuid) {
-
-
-	return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/gateway/' + deviceGuid).map(response => {
-		return response;
-	});
-}
-
-getdevicestatics(deviceGuid) {
+	getDetailsdevice(deviceGuid) {
 
 
-	return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/dashboard/getdevicedetail/' + deviceGuid).map(response => {
-		return response;
-	});
-}
+		return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/gateway/' + deviceGuid).map(response => {
+			return response;
+		});
+	}
 
-  /**
-   * Get tag lookup
-   * @param templateId
-   */
-  getTagLookup(templateId) {
-    return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/lookup/attributes/' + templateId).map(response => {
-
-      return response;
-    });
-  }
-
-  getdevicesensor(deviceGuid,templateId) {
+	getdevicestatics(deviceGuid) {
 
 
-	return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/lookup/sensors/' + templateId + '/' + deviceGuid).map(response => {
-		return response;
-	});
-}
+		return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/dashboard/getdevicedetail/' + deviceGuid).map(response => {
+			return response;
+		});
+	}
+
+	getSensorsLastValue(deviceGuid) {
+
+
+		return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/device/telemetry/' + deviceGuid).map(response => {
+			return response;
+		});
+	}
+
+	getDeviceStatus(uniqueId) {
+
+		return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/device/connectionstatus/' + uniqueId).map(response => {
+			return response;
+		});
+	}
+
+
+
+	/**
+	 * Get tag lookup
+	 * @param templateId
+	 */
+	getTagLookup(templateId) {
+		return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/lookup/attributes/' + templateId).map(response => {
+
+			return response;
+		});
+	}
+
+	getdevicesensor(deviceGuid, templateId) {
+
+
+		return this.httpClient.get<any>(this.apiServer.baseUrl + 'api/lookup/sensors/' + templateId + '/' + deviceGuid).map(response => {
+			return response;
+		});
+	}
 }

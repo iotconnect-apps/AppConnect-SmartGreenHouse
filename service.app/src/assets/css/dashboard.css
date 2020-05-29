@@ -635,7 +635,14 @@ ul.sidebar-menu > li i.icon-sidebar{top:5px;}
 .alerts-dashboard li.alert-high::before{background-color: #eb4b4c;}
 .alerts-dashboard li.alert-medium::before{background-color: #fb9823;}
 .alerts-dashboard li.alert-normal::before{background-color: #00b070;}
-.alerts-dashboard li:last-child{border-bottom: none;}
+
+.alerts-dashboard li.alert-Critical::before{background-color: #f73f41;}
+.alerts-dashboard li.alert-Information::before{background-color: #7fdceb;}
+.alerts-dashboard li.alert-Major::before{background-color: #f8a342;}
+.alerts-dashboard li.alert-Minor::before{background-color: #f3f171;}
+.alerts-dashboard li.alert-Warningg::before{background-color: #ee5600;}
+
+.alerts-dashboard li:last-child{border-bottom: solid 1px #e9e9e9;}
 .alerts-dashboard span{display: block;}
 .alerts-dashboard span.alerts-date{color: #8a8a8a;}
 .alerts-dashboard span.alerts-info{color: #000000;}

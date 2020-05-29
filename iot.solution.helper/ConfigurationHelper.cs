@@ -48,6 +48,7 @@ namespace component.helper
         public Messaging Messaging { get; set; }
         public TokenSetting Token { get; set; }
         public LoggerSetting Logger { get; set; }
+        public HangFireSetting HangFire { get; set; }
         public List<IOTConnectSetting> IOTConnectSettings { get; set; }
     }
 
@@ -90,5 +91,12 @@ namespace component.helper
     public class LoggerSetting
     {
         public string BrokerConnection { get; set; }
+        public string SolutionName { get; set; }
+    }
+
+    public class HangFireSetting
+    {
+        public bool Enabled { get; set; }
+        public int TelemetryHours { get; set; }
     }
 }

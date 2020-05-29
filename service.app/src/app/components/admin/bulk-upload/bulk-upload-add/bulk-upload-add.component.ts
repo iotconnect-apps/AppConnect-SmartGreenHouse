@@ -106,10 +106,14 @@ export class BulkuploadAddComponent implements OnInit {
         this.formshow = true
         this._notificationService.add(new Notification('success', " File verified successfully."));
         } else {
+              this.dataSource = new MatTableDataSource(response.data);
+              this.dataSource.paginator = this.paginator;
+              this.tblshow = true
+             // this.formshow = true
              this.bulkForm.get('profile_picture').setValue(null)
              this.checkSubmitStatus = false;
              this.myInputVariable.nativeElement.value = "";
-            this._notificationService.add(new Notification('error', "File already exists"));
+            this._notificationService.add(new Notification('error', response.message));
           }
       });
     }

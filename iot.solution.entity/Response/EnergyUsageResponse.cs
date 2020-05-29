@@ -16,6 +16,7 @@ namespace iot.solution.entity.Response
 
     public class SoilNutritionResponse
     {
+        public string Day { get; set; }
         public string PHLevel { get; set; }
         public string N { get; set; }
         public string P { get; set; }

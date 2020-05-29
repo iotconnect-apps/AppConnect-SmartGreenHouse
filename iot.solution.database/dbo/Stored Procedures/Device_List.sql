@@ -140,6 +140,7 @@ BEGIN
 			AS 
 			(	SELECT d.[parentDeviceGuid],COUNT(*) [totalDevice] FROM [Device] D
 				INNER JOIN #temp_Device t ON D.[parentDeviceGuid] = t.[Guid]
+				WHERE D.[isDeleted] = 0
 				GROUP BY d.[parentDeviceGuid]
 			)
 			UPDATE t

@@ -65,10 +65,10 @@ BEGIN
 		BEGIN
 			SELECT TOP 1 @newid = [guid] FROM [Role] (NOLOCK) WHERE companyguid = @companyguid AND [isdeleted]=0 AND [name]=@name
 		END
-		--ELSE
-		--BEGIN
-		--	SET @newid = NEWID()
-		--END
+		ELSE
+		BEGIN
+			SET @newid = NEWID()
+		END
 		
 		BEGIN TRAN
 			IF NOT EXISTS (SELECT TOP 1 1 FROM [Role] (NOLOCK) WHERE [guid] = @newid AND [isdeleted]=0 and companyguid = @companyguid AND [name]=@name)

@@ -4686,10 +4686,38 @@ body.unauthorized-body-class .main-header {
 .min-h-400{
   min-height: 400px;
 }
+.min-h-480{
+  min-height: 480px;
+}
+.tab-link-bar{
+  margin-right: 20px;
+}
 .elipsis-3{
   display: -webkit-box !important;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+.user-profle-image{
+	position: relative;
+}
+.user-profle-image .close-icn{
+	position: absolute;
+    top: -6px;
+    right: -8px;
+    height: 25px;
+    width: 25px;
+    background: rgba(255,255,255,0.8);
+    padding: 6px;
+	border-radius: 50%;
+	cursor: pointer;
+}
+.gh-add .close-icn{
+  left: 60px !important;
+}
+.gh-add .img-fluid{
+  height: 70px !important;
+  width: 80px !important;
+  object-fit: cover !important;
 }

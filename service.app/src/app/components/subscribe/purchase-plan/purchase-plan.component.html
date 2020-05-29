@@ -302,33 +302,23 @@
                                   </div> -->
                         </li>
                         <!-- </ng-scrollbar> -->
-                        <li>
+                        <li *ngFor="let featureValueDeatil of data?.features;">
                           <div class="feature-name-text text-left">
                             <p class="feature-icon-holder">
-                              <span> Messages</span></p>
+                              <span> {{featureValueDeatil.displayName}}</span></p>
                           </div>
-                          <div class="feature-name-value text-right d-flex flex-wrap align-items-center">
-                            <p class="decimal m-0"> {{data.features[0]['featureValue']/1000}}K/day</p>
+                          <div *ngIf="featureValueDeatil.displayName === 'Messages'"
+                            class="feature-name-value text-right d-flex flex-wrap align-items-center">
+                            <p class="decimal m-0">
+                              {{featureValueDeatil.featureValue/1000}}K/day</p>
                           </div>
-                        </li>
-                        <li>
-                          <div class="feature-name-text text-left">
-                            <p class="feature-icon-holder">
-                              <span> Devices</span></p>
-                          </div>
-                          <div class="feature-name-value text-right d-flex flex-wrap align-items-center">
-                            <p class="decimal m-0"> {{data.features[1]['featureValue']}}</p>
+                          <div *ngIf="featureValueDeatil.displayName !== 'Messages'"
+                            class="feature-name-value text-right d-flex flex-wrap align-items-center">
+                            <p class="decimal m-0">
+                              {{featureValueDeatil.featureValue}}</p>
                           </div>
                         </li>
-                        <li>
-                          <div class="feature-name-text text-left">
-                            <p class="feature-icon-holder">
-                              <span> Users</span></p>
-                          </div>
-                          <div class="feature-name-value text-right d-flex flex-wrap align-items-center">
-                            <p class="decimal m-0"> {{data.features[2]['featureValue']}}</p>
-                          </div>
-                        </li>
+                        
                       </ul>
                     </div>
 
@@ -352,7 +342,7 @@
         <div class="row m-t-20"
           *ngIf="hide || !appConstant.isEmptyString(subscriberId) || appConstant.isEmptyString(selectedPlan.planCode)">
           <div class="col-md-12 col-ld-12">
-            <div class="p-b-10 confirm-payment"
+            <div class="confirm-payment"
               *ngIf="myForm.value.selectedPlanName != '' && !appConstant.isEmptyList(solutionPlans)">
               <h2>Confirm Payment</h2>
               <p>
@@ -361,7 +351,7 @@
                 <b>{{myForm.value.selectedPlanPrice}}/mo</b>
               </p>
             </div>
-            <div class="clearfix m-t-30" *ngIf="!appConstant.isEmptyList(solutionPlans)">
+            <div class="clearfix" *ngIf="!appConstant.isEmptyList(solutionPlans)">
               <app-payment [email]="emailId" [IsOpenPage]="false"></app-payment>
             </div>
             <!-- 

@@ -13,7 +13,7 @@ namespace iot.solution.service.Interface
         Entity.ActionStatus Delete(Guid id);
         Entity.SearchResult<List<Entity.Device>> List(Entity.SearchRequest request);
         Entity.SearchResult<List<Entity.DeviceDetailResponse>> GetGreenHouseDeviceDetailList(Entity.SearchRequest request);
-        Response.DeviceDetailResponse GetDeviceDetail(Guid deviceId);
+        Entity.BaseResponse<Response.DeviceDetailResponse> GetDeviceDetail(Guid deviceId);
         List<Entity.Device> GetGreenHouseDeviceList(Guid greenhouseId);
         Entity.SearchResult<List<Entity.DeviceSearchResponse>> GatewayList(Entity.SearchRequest request);
         Entity.ActionStatus UpdateStatus(Guid id, bool status);
@@ -24,5 +24,7 @@ namespace iot.solution.service.Interface
         Entity.BaseResponse<int> ValidateKit(string kitCode);
         Entity.BaseResponse<bool> ProvisionKit(Entity.ProvisionKitRequest request);
         Entity.BaseResponse<Entity.DeviceCounterResult> GetDeviceCounters();
+        Entity.BaseResponse<List<Entity.DeviceTelemetryDataResult>> GetTelemetryData(Guid deviceId);
+        Entity.BaseResponse<Entity.DeviceConnectionStatusResult> GetConnectionStatus(string uniqueId);
     }
 }

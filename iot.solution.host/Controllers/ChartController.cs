@@ -30,7 +30,7 @@ namespace host.iot.solution.Controllers
             Entity.BaseResponse<List<Response.EnergyUsageResponse>> response = new Entity.BaseResponse<List<Response.EnergyUsageResponse>>(true);
             try
             {
-                response.Data = _chartService.GetEnergyUsage(request);
+                response = _chartService.GetEnergyUsage(request);
             }
             catch (Exception ex)
             {
@@ -47,7 +47,7 @@ namespace host.iot.solution.Controllers
             Entity.BaseResponse<List<Response.WaterUsageResponse>> response = new Entity.BaseResponse<List<Response.WaterUsageResponse>>(true);
             try
             {
-                response.Data = _chartService.GetWaterUsage(request);
+                response = _chartService.GetWaterUsage(request);
             }
             catch (Exception ex)
             {
@@ -64,7 +64,7 @@ namespace host.iot.solution.Controllers
             Entity.BaseResponse<List<Response.SoilNutritionResponse>> response = new Entity.BaseResponse<List<Response.SoilNutritionResponse>>(true);
             try
             {
-                response.Data = _chartService.GetSoilNutrition(request);
+                response = _chartService.GetSoilNutrition(request);
             }
             catch (Exception ex)
             {

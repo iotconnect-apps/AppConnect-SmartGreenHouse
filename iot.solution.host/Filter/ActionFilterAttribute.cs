@@ -7,9 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using component.services.loghandler;
+using Microsoft.Extensions.Primitives;
+using Microsoft.AspNetCore.WebUtilities;
+using Entity = iot.solution.entity;
+using Newtonsoft.Json;
 
 namespace host.iot.solution.Filter
 {
+   
     public class ActionFilterAttribute : Microsoft.AspNetCore.Mvc.Filters.ActionFilterAttribute, IActionFilter
     {
         private ActionExecutingContext _request { get; set; }

@@ -58,7 +58,7 @@ export class LeftMenuComponent implements OnInit {
 					icon: 'icon-notification',
 					applylink: true
 				},
-				
+
 			];
 		} else {
 			this.menuList = [
@@ -77,6 +77,20 @@ export class LeftMenuComponent implements OnInit {
 					applylink: true
 				},
 				{
+					name: "Hardware Kits",
+					link: "/gateways",
+					li_color: '',
+					icon: 'icon-devices',
+					applylink: true
+				},
+				{
+					name: 'Notifications',
+					link: '/notifications',
+					li_color: '',
+					icon: 'icon-notification',
+					applylink: true
+				},
+				{
 					name: "Roles",
 					link: "/roles",
 					li_color: '',
@@ -90,20 +104,6 @@ export class LeftMenuComponent implements OnInit {
 					icon: 'icon-user-group',
 					applylink: true
 				},
-				{
-          name: "Hardware Kits",
-          link: "/gateways",
-					li_color: '',
-					icon: 'icon-devices',
-					applylink: true
-				},
-				{
-					name: 'Notifications',
-					link: '/notifications',
-					li_color: '',
-					icon: 'icon-notification',
-					applylink: true
-				},	
 				{
 					name: 'Alerts',
 					link: '/alerts',

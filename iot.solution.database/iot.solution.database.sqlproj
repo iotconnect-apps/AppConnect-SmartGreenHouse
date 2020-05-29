@@ -66,6 +66,7 @@
     <Folder Include="Security\" />
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="IOTConnect\Stored Procedures" />
+    <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\KitTypeAttribute.sql" />
@@ -138,11 +139,14 @@
     <Build Include="dbo\Stored Procedures\Alert_List.sql" />
     <Build Include="dbo\Stored Procedures\IOTConnectAlert_Add.sql" />
     <Build Include="dbo\Stored Procedures\IotConnect_ManageDeviceTemplate.sql" />
+    <Build Include="dbo\Stored Procedures\GreenHouseStatistics_Get.sql" />
+    <Build Include="dbo\Stored Procedures\Device_Statistics_Get.sql" />
+    <PostDeploy Include="Scripts\MasterData.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="service.Database.refactorlog" />
   </ItemGroup>
   <ItemGroup>
-    <PostDeploy Include="dbo\Stored Procedures\masterdata.sql" />
+    <None Include="Scripts\Script.PostDeployment.sql" />
   </ItemGroup>
 </Project>

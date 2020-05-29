@@ -6,6 +6,6 @@ namespace component.eventbus.Common.Enum
 {
     public enum ApplicationType
     {
-        Logger,
+        Greenhouse,
     }
 }

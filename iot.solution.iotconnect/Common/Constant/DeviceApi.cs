@@ -24,5 +24,8 @@ namespace IoTConnect.Common.Constant
         internal const string AllottedDeviceUser = "api/v{0}/Device/user/{1}/grant";
         internal const string GetAllottedDeviceUser = "api/v{0}/Device/user";
         internal const string SingleAllottedDeviceUser = "api/v{0}/Device/user/{1}";
+
+        internal const string TelemetryData = "api/v{0}/Telemetry/device/{1}";
+        internal const string ConnectionStatus = "api/v{0}/Device/connection-status?uniqueId={1}";
     }
 }

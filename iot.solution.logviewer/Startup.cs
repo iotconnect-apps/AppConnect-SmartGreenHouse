@@ -87,7 +87,7 @@ namespace component.services.logger.viewer
             services.AddSingleton<IEventBus, AzureServiceBusManager>();
             services.Configure<DomainManager>(s =>
             {
-                s.ServiceType = ServiceType.General_LoggerService;
+                s.ServiceType = Configuration.GetValue<string>("Logger:SolutionName");
                 s.DomainConfiguration = new List<Type> { typeof(ErrorLoggerModel), typeof(FatalLoggerModel), typeof(DebugLoggerModel), typeof(WarningLoggerModel), typeof(InfoLoggerModel) };
             });
             #endregion Event bus config End

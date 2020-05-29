@@ -68,12 +68,35 @@
 				<mat-card class="dashboard-card mat-card min-h-480">
 					<ul *ngIf="alerts.length>0" class="alerts-dashboard">
 						<li class="alert-{{alert['severity']}}" *ngFor="let alert of alerts">
-							<span class="alerts-date">{{alert['eventDate'] | date:'M/d/yy, h:mm:ss a'}}</span>
+							<span class="alerts-date">{{getLocalDate(alert['eventDate'])}}</span>
 							<span class="alerts-info">{{alert.message}}</span>
 						</li>
 					</ul>
 					<div *ngIf="alerts.length==0" class="centerclass">No records found</div>
-
+					<div *ngIf="alerts.length>0" class="alert-indicator-wrapper">
+						<div class="alert-indicator-list">
+							<div class="alert-indicator Critical">
+								<span class="legend"></span>
+								<span class="alert-text">Critical</span>
+							</div>
+							<div class="alert-indicator Information">
+								<span class="legend"></span>
+								<span class="alert-text">Information</span>
+							</div>
+							<div class="alert-indicator Major">
+								<span class="legend"></span>
+								<span class="alert-text">Major</span>
+							</div>
+							<div class="alert-indicator Minor">
+								<span class="legend"></span>
+								<span class="alert-text">Minor</span>
+							</div>
+							<div class="alert-indicator Warning">
+								<span class="legend"></span>
+								<span class="alert-text">Warning</span>
+							</div>
+						</div>
+					</div>
 				</mat-card>
 
 			</div>
@@ -109,37 +132,37 @@
 							<span class="farmstatics-icon"><img src="../../../assets/images/farm_icon_energy.png"
 									alt=""></span>
 							<span class="farmstatics-title">Energy Usages (kWh)</span>
-							<span class="farmstatics-number">{{energyUsage}}</span>
+							<span class="farmstatics-number">{{stats.energyUsage}}</span>
 						</div>
 						<div class="farmstatics farmtemperature">
 							<span class="farmstatics-icon"><img src="../../../assets/images/farm_icon_temp.png"
 									alt=""></span>
 							<span class="farmstatics-title">Temperature</span>
-							<span class="farmstatics-number" *ngIf="temperature">{{temperature}}<sup>0</sup>F</span>
+							<span class="farmstatics-number">{{stats.temperature}}<sup>0</sup>F</span>
 						</div>
 						<div class="farmstatics farmmoisture">
 							<span class="farmstatics-icon"><img src="../../../assets/images/farm_icon_moisture.png"
 									alt=""></span>
 							<span class="farmstatics-title">Moisture</span>
-							<span class="farmstatics-number" *ngIf="moisture">{{moisture}}%</span>
+							<span class="farmstatics-number">{{stats.moisture}}%</span>
 						</div>
 						<div class="farmstatics farmhumidity">
 							<span class="farmstatics-icon"><img src="../../../assets/images/farm_icon_humidity.png"
 									alt=""></span>
 							<span class="farmstatics-title">Humidity</span>
-							<span class="farmstatics-number" *ngIf="humidity">{{humidity}}%</span>
+							<span class="farmstatics-number">{{stats.humidity}}%</span>
 						</div>
 						<div class="farmstatics farmwater">
 							<span class="farmstatics-icon"><img src="../../../assets/images/farm_icon_water.png"
 									alt=""></span>
 							<span class="farmstatics-title">Water Usages (gal)</span>
-							<span class="farmstatics-number">{{waterUsage}}</span>
+							<span class="farmstatics-number">{{stats.waterUsage}}</span>
 						</div>
 						<div class="farmstatics farmdevices">
 							<span class="farmstatics-icon"><img src="../../../assets/images/farm_icon_device.png"
 									alt=""></span>
 							<span class="farmstatics-title">Total Devices</span>
-							<span class="farmstatics-number">{{totalDevices}}</span>
+							<span class="farmstatics-number">{{stats.totalDevices}}</span>
 						</div>
 					</div>
 

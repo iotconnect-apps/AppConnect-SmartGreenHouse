@@ -10,12 +10,14 @@ using host.iot.solution.Controllers;
 using System.Xml.Serialization;
 using System.Xml;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
+using System.Text;
 
 namespace iot.solution.host.Controllers
 {
     [Route(AlertRoute.Route.Global)]
     [ApiController]
-    public class AlertController : ControllerBase
+    public class AlertController : BaseController
     {
         private readonly IRuleService _ruleService;
 
@@ -25,26 +27,33 @@ namespace iot.solution.host.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route(AlertRoute.Route.Manage, Name = AlertRoute.Name.Manage)]
-        public Entity.BaseResponse<bool> Manage([FromBody]Entity.IOTAlertMessage request = null)
+        public Entity.BaseResponse<bool> Manage()
         {
             Entity.BaseResponse<bool> response = new Entity.BaseResponse<bool>(true);
             try
             {
-                if (request == null) { return response; }
-
-                XmlSerializer xsSubmit = new XmlSerializer(typeof(Entity.IOTAlertMessage));
-                string xml = "";
-                using (var sww = new StringWriter())
+                using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
                 {
-                    using (XmlWriter writer = XmlWriter.Create(sww))
+                    string strRequest = reader.ReadToEndAsync().Result;
+                    Entity.IOTAlertMessage objRequest = Newtonsoft.Json.JsonConvert.DeserializeObject<Entity.IOTAlertMessage>(strRequest);
+                    if (!string.IsNullOrWhiteSpace(strRequest))
                     {
-                        xsSubmit.Serialize(writer, request);
-                        xml = sww.ToString(); // Your XML
+                        XmlSerializer xsSubmit = new XmlSerializer(typeof(Entity.IOTAlertMessage));
+                        string xml = "";
+                        using (var sww = new StringWriter())
+                        {
+                            using (XmlWriter writer = XmlWriter.Create(sww))
+                            {
+                                xsSubmit.Serialize(writer, objRequest);
+                                xml = sww.ToString();
+                            }
+                        }
+                        _ruleService.ManageWebHook(xml);
+                        response.IsSuccess = true;
                     }
                 }
-                _ruleService.ManageWebHook(xml);
-                response.IsSuccess = true;
             }
             catch (Exception ex)
             {

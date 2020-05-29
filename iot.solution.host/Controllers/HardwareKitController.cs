@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using host.iot.solution.Controllers;
+using host.iot.solution.Filter;
 using iot.solution.entity.Structs.Routes;
 using iot.solution.service.Interface;
 using Microsoft.AspNetCore.Http;
@@ -62,12 +63,13 @@ namespace iot.solution.host.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route(HardwareKitRoute.Route.GetById, Name = HardwareKitRoute.Name.GetById)]
-        public Entity.BaseResponse<Entity.HardwareKitDTO> Get(Guid id)
+        [EnsureGuidParameterAttribute("id", "Hardware Kit")]
+        public Entity.BaseResponse<Entity.HardwareKitDTO> Get(string id)
         {
             Entity.BaseResponse<Entity.HardwareKitDTO> response = new Entity.BaseResponse<Entity.HardwareKitDTO>(true);
             try
             {
-                response.Data = _service.Get(id);
+                response.Data = _service.Get(Guid.Parse(id));
             }
             catch (Exception ex)
             {
@@ -108,12 +110,13 @@ namespace iot.solution.host.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route(HardwareKitRoute.Route.Delete, Name = HardwareKitRoute.Name.Delete)]
-        public Entity.BaseResponse<bool> Delete(Guid id)
+        [EnsureGuidParameterAttribute("id", "Hardware Kit")]
+        public Entity.BaseResponse<bool> Delete(string id)
         {
             Entity.BaseResponse<bool> response = new Entity.BaseResponse<bool>(true);
             try
             {
-                var status = _service.Delete(id);
+                var status = _service.Delete(Guid.Parse(id));
                 response.IsSuccess = status.Success;
                 response.Message = status.Message;
                 response.Data = status.Success;
@@ -265,10 +268,12 @@ namespace iot.solution.host.Controllers
                 if (result.Success)
                     response.IsSuccess = true;
                 else
+                {
                     response.IsSuccess = false;
-
+                    response.Message = "One or more Kit/UniqueId error!";
+                }
                 response.Data = result.Data;
-
+              
             }
             catch (Exception ex)
             {

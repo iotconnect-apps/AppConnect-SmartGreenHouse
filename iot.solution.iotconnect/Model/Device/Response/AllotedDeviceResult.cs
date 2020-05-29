@@ -79,7 +79,8 @@ namespace IoTConnect.Model
         public AllotedPermission permission { get; set; }
     }
 
-    public class AllotedPermission {
+    public class AllotedPermission
+    {
         /// <summary>
         /// Is View ?.
         /// </summary>
@@ -99,5 +100,22 @@ namespace IoTConnect.Model
         public int acquired { get; set; }
         public int available { get; set; }
         public int total { get; set; }
+    }
+
+    public class DeviceTelemetryData
+    {
+        public string templateAttributeGuid { get; set; }
+        public string attributeName { get; set; }
+        public string attributeValue { get; set; }
+        public DateTime deviceUpdatedDate { get; set; }
+        public int notificationCount { get; set; }
+        public object aggregateType { get; set; }
+        public string DataType { get; set; }
+        public object aggregateTypeValues { get; set; }
+    }
+
+    public class DeviceConnectionStatus
+    {
+        public bool IsConnected { get; set; }
     }
 }

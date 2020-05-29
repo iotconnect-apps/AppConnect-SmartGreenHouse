@@ -1153,6 +1153,56 @@ namespace IoTConnect.DeviceProvider
                                      .SetQueryParams(new { companyGuid = companyGuid })
                                      .GetJsonAsync<DataResponse<List<DeviceCounterResult>>>();
         }
+
+        public async Task<DataResponse<List<DeviceTelemetryData>>> GetTelemetryData(string deviceGuid)
+        {
+            var portalApi = await _ioTConnectAPIDiscovery.GetPortalUrl(_envCode, _solutionKey, IoTConnectBaseURLType.TelemetryBaseUrl);
+            string accessTokenUrl = string.Concat(portalApi, DeviceApi.TelemetryData);
+            string formattedUrl = String.Format(accessTokenUrl, Constants.deviceVersion, deviceGuid);
+            return await formattedUrl.WithHeaders(new { Content_type = Constants.contentType, Authorization = Constants.bearerTokenType + _token })
+                                     .SetQueryParams(new { companyGuid = deviceGuid })
+                                     .GetJsonAsync<DataResponse<List<DeviceTelemetryData>>>();
+        }
+
+        public async Task<DataResponse<List<DeviceConnectionStatus>>> GetConnectionStatus(string uniqueId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(uniqueId))
+                {
+                    List<ErrorItemModel> errorItemModels = new List<ErrorItemModel>();
+                    ErrorItemModel errorItemModel = new ErrorItemModel()
+                    {
+                        Message = "UniqueId required",
+                        Param = "UniqueId"
+                    };
+                    errorItemModels.Add(errorItemModel);
+                    return new DataResponse<List<DeviceConnectionStatus>>(null)
+                    {
+                        errorMessages = errorItemModels,
+                        status = false
+                    };
+                }
+                var portalApi = await _ioTConnectAPIDiscovery.GetPortalUrl(_envCode, _solutionKey, IoTConnectBaseURLType.DeviceBaseUrl);
+                string accessTokenUrl = string.Concat(portalApi, DeviceApi.ConnectionStatus);
+                string formattedUrl = String.Format(accessTokenUrl, Constants.deviceVersion, uniqueId);
+                return await formattedUrl.WithHeaders(new { Content_type = Constants.contentType, Authorization = Constants.bearerTokenType + _token })
+                                         .GetJsonAsync<DataResponse<List<DeviceConnectionStatus>>>();
+            }
+            catch (IoTConnectException ex)
+            {
+
+                List<ErrorItemModel> errorItemModels = new List<ErrorItemModel>();
+                errorItemModels.AddRange(ex.error);
+                return new DataResponse<List<DeviceConnectionStatus>>(null)
+                {
+                    errorMessages = errorItemModels,
+                    message = ex.message,
+                    status = false
+                };
+            }
+        }
+        
         #endregion
     }
 }

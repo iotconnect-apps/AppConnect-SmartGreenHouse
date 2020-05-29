@@ -21,5 +21,5 @@ BEGIN
 	, x.R.query('severity').value('.', 'NVARCHAR(50)') AS 'severity'
 	, x.R.query('ruleName').value('.', 'NVARCHAR(50)') AS 'ruleName'
 	, x.R.query('data').value('.', 'NVARCHAR(2000)') AS 'data'
-	FROM @data.nodes('/RootObject') as x(R)
+	FROM @data.nodes('/IOTAlertMessage') as x(R)
 END

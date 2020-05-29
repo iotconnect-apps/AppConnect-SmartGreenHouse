@@ -192,7 +192,7 @@ namespace component.eventbus
                             T retrunModel = JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(objEvent1.OriginalValue));
 
                             msg.UserProperties.Add(new KeyValuePair<string, object>("tsReceive", DateTime.UtcNow.Ticks));
-                            msg.UserProperties.Add(new KeyValuePair<string, object>("rId", (int)_domainManager.ServiceType));
+                            msg.UserProperties.Add(new KeyValuePair<string, object>("rId", _domainManager.ServiceType));
 
                             PropertyInfo prop = null;
 
@@ -456,9 +456,9 @@ namespace component.eventbus
                         serviceBusDetails.Connection = serviceBusConnection;
                         serviceBusDetails.TopicName = customAttribute.TopicName;
                         serviceBusDetails.EventId = customAttribute.EventId;
-                        serviceBusDetails.ProducerId = (Int16)_domainManager.ServiceType;
+                        //serviceBusDetails.ProducerId = (Int16)_domainManager.ServiceType;
 
-                        serviceBusDetails.ProducerApplicationId = (Int16)_domainManager.ApplicationType;
+                       //serviceBusDetails.ProducerApplicationId = (Int16)_domainManager.ApplicationType;
 
                         Dictionary<string, string> dict = serviceBusConnection.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
                                     .Select(part => part.Split(new[] { '=' }, 2))

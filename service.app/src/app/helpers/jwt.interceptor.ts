@@ -65,7 +65,7 @@ export class JwtInterceptor implements HttpInterceptor {
                     this.router.navigate(['/admin']);
 
                 } else {
-                    this._notificationService.refreshTokenInProgress = true;
+                    //this._notificationService.refreshTokenInProgress = true;
                     //Genrate params for token refreshing
                     let params = {
                         token: currentUser.refresh_token

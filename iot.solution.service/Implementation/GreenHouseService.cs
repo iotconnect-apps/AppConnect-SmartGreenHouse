@@ -37,10 +37,12 @@ namespace iot.solution.service.Implementation
         {
             try
             {
-                if(isAdmin)
-                    return _greenHouseRepository.GetAll().Where(e => !e.IsDeleted && (isActive.HasValue? e.IsActive.Value == isActive:true)).Select(p => Mapper.Configuration.Mapper.Map<Entity.GreenHouse>(p)).ToList();
+                if (isAdmin)
+                    return _greenHouseRepository.GetAll().Where(e => !e.IsDeleted && (isActive.HasValue ? e.IsActive.Value == isActive : true) && e.Guid != SolutionConfiguration.EntityGuid).Select(p => Mapper.Configuration.Mapper.Map<Entity.GreenHouse>(p)).ToList();
                 else
-                    return _greenHouseRepository.GetAll().Where(e => !e.IsDeleted && (isActive.HasValue ? e.IsActive.Value == isActive : true) && e.CompanyGuid == SolutionConfiguration.CompanyId).Select(p => Mapper.Configuration.Mapper.Map<Entity.GreenHouse>(p)).ToList();
+                {                    
+                    return _greenHouseRepository.GetAll().Where(e => !e.IsDeleted && (isActive.HasValue ? e.IsActive.Value == isActive : true) && e.Guid != SolutionConfiguration.EntityGuid && e.CompanyGuid == SolutionConfiguration.CompanyId).Select(p => Mapper.Configuration.Mapper.Map<Entity.GreenHouse>(p)).ToList();
+                }
             }
             catch (Exception ex)
             {
@@ -193,6 +195,17 @@ namespace iot.solution.service.Implementation
             }
             return null;
         }
+        // Delete Image on Server   
+        private bool DeleteEntityImage(Guid guid, string imageName)
+        {
+            var fileBasePath = SolutionConfiguration.UploadBasePath + SolutionConfiguration.GreenHouseImageBasePath;
+            var filePath = Path.Combine(fileBasePath, imageName);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            return true;
+        }
         public Entity.ActionStatus Delete(Guid id)
         {
             Entity.ActionStatus actionStatus = new Entity.ActionStatus(true);
@@ -239,7 +252,51 @@ namespace iot.solution.service.Implementation
             }
             return actionStatus;
         }
-       
+        public Entity.ActionStatus DeleteImage(Guid id)
+        {
+            Entity.ActionStatus actionStatus = new Entity.ActionStatus(false);
+            try
+            {
+                var dbEntity = _greenHouseRepository.FindBy(x => x.Guid.Equals(id)).FirstOrDefault();
+                if (dbEntity == null)
+                {
+                    throw new NotFoundCustomException($"{CommonException.Name.NoRecordsFound} : Entity");
+                }
+
+                bool deleteStatus = DeleteEntityImage(id, dbEntity.Image);
+                if (deleteStatus)
+                {
+                    dbEntity.Image = "";
+                    dbEntity.UpdatedDate = DateTime.Now;
+                    dbEntity.UpdatedBy = SolutionConfiguration.CurrentUserId;
+                    dbEntity.CompanyGuid = SolutionConfiguration.CompanyId;
+
+                    actionStatus = _greenHouseRepository.Manage(dbEntity);
+                    actionStatus.Data = Mapper.Configuration.Mapper.Map<Model.GreenHouse, Entity.GreenHouse>(actionStatus.Data);
+                    actionStatus.Success = true;
+                    actionStatus.Message = "Image deleted successfully!";
+                    if (!actionStatus.Success)
+                    {
+                        _logger.ErrorLog(new Exception($"Entity is not updated in database, Error: {actionStatus.Message}"));
+                        actionStatus.Success = false;
+                        actionStatus.Message = actionStatus.Message;
+                    }
+                }
+                else
+                {
+                    actionStatus.Success = false;
+                    actionStatus.Message = "Image not deleted!";
+                }
+                return actionStatus;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+                actionStatus.Success = false;
+                actionStatus.Message = ex.Message;
+            }
+            return actionStatus;
+        }
         public Entity.SearchResult<List<Entity.GreenHouseDetail>> List(Entity.SearchRequest request)
         {
             try
@@ -298,20 +355,19 @@ namespace iot.solution.service.Implementation
             }
             return actionStatus;
         }
-        public Response.GreenHouseDetailResponse GetGreenHouseDetail(Guid greenhouseId)
+        public Entity.BaseResponse<Response.GreenHouseDetailResponse> GetGreenHouseDetail(Guid greenhouseId)
         {
-            Response.GreenHouseDetailResponse result = new Response.GreenHouseDetailResponse();
+            Entity.BaseResponse<List<Response.GreenHouseDetailResponse>> listResult = new Entity.BaseResponse<List<Response.GreenHouseDetailResponse>>();
+            Entity.BaseResponse<Response.GreenHouseDetailResponse> result = new Entity.BaseResponse<Response.GreenHouseDetailResponse>(true);
             try
             {
-                result = new Response.GreenHouseDetailResponse()
+                listResult = _greenHouseRepository.GetStatistics(greenhouseId);
+                if (listResult.Data.Count > 0)
                 {
-                    EnergyUsage = 2700,
-                    Temperature = 73,
-                    Moisture = 15,
-                    Humidity = 62,
-                    WaterUsage = 3800,
-                    TotalDevices = 15
-                };
+                    result.IsSuccess = true;
+                    result.Data = listResult.Data[0];
+                    result.LastSyncDate = listResult.LastSyncDate;
+                }
             }
             catch (Exception ex)
             {

@@ -55,8 +55,6 @@ export class HardwareAddComponent implements OnInit {
   checkSubmitStatus = false;
   checkSubmitStatusinfrm = false;
   checkobjStatus = false;
-  buildingList = [];
-  selectedBuilding = '';
   floorList = [];
   spaceList = [];
   templateList = [];
@@ -173,6 +171,7 @@ export class HardwareAddComponent implements OnInit {
           this.messageAlertDataModel = {
             title: "Message",
             message: this._appConstant.msgHKchildRequired,
+            message2:'',
             okButtonName: "Ok"
           };
           const dialogRef = this.dialog.open(MessageDialogComponent, {
@@ -185,6 +184,7 @@ export class HardwareAddComponent implements OnInit {
       } else {
         this.messageAlertDataModel = {
           title: "Message",
+          message2: '',
           message: this._appConstant.msgHKdevicedRequired,
           okButtonName: "Ok"
         };
@@ -285,6 +285,7 @@ export class HardwareAddComponent implements OnInit {
             this.messageAlertDataModel = {
               title: "Message",
               message: this._appConstant.msgHKuniqueId,
+              message2: '',
               okButtonName: "Ok"
             };
             const dialogRef = this.dialog.open(MessageDialogComponent, {
@@ -389,6 +390,7 @@ export class HardwareAddComponent implements OnInit {
       this.messageAlertDataModel = {
         title: "Message",
         message: this._appConstant.msgWarning,
+        message2: '',
         okButtonName: "Ok"
       };
       const dialogRef = this.dialog.open(MessageDialogComponent, {

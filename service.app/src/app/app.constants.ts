@@ -129,6 +129,7 @@ export interface DeleteAlertDataModel {
 export interface MessageAlertDataModel {
   title: string;
   message: string;
+  message2: string;
   okButtonName: string;
 }
 

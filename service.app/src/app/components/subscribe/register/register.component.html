@@ -248,7 +248,7 @@
                     <label>Zip Code<span class="required">*</span>
                     </label>
                     <mat-form-field>
-                      <input type="text" matInput placeholder="Zip Code" autocomplete="off"
+                      <input maxlength="7" type="text" matInput placeholder="Zip Code" autocomplete="off"
                         formControlName="postalCode">
                       <mat-icon
                         *ngIf="SubscriberFormGroup.controls.postalCode?.errors && !SubscriberFormGroup.controls.postalCode?.errors?.required"

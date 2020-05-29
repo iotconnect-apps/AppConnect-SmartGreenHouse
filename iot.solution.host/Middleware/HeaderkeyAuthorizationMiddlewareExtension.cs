@@ -36,13 +36,13 @@ namespace host.iot.solution.Middleware
                     || context.Request.Path.Value.Contains("/api/subscriber")
                     || context.Request.Path.Value.Contains("/api/account/login")
                     || context.Request.Path.Value.StartsWith("/wwwroot/")
-                    || context.Request.Path.Value.StartsWith("/api/alert/addiotalert")
+                    || context.Request.Path.Value.Contains("/api/alert/addiotalert")
                     || context.Request.Path.Value.Contains("/api/account/adminlogin")) // Nikunj
                 {
                     await _next.Invoke(context);
                     return;
                 }
-
+              
                 SolutionConfiguration.CompanyId = Guid.Parse(context.Request.Headers["company-id"]);
                 if (SolutionConfiguration.CompanyId == null || SolutionConfiguration.CompanyId == Guid.Empty)
                 {

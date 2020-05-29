@@ -16,6 +16,7 @@ export class AdminLoginComponent implements OnInit {
 	checkSubmitStatus = false;
 	loginObject = {};
 	loginStatus = false;
+	currentUser = JSON.parse(localStorage.getItem("currentUser"));
 	constructor(
 		private spinner: NgxSpinnerService,
 		private router: Router,
@@ -30,9 +31,21 @@ export class AdminLoginComponent implements OnInit {
 		  this.router.navigate(['admin/dashboard']);
 		}
 		this.createFormGroup();
+		if(localStorage.getItem("currentUser")){
+			this.logout();
+		}
 		// logout the person when he opens the app for the first time
 		//this.UserService.logout();
 	}
+
+	logout() {
+		this.authService.logout();
+			if(this.currentUser.userDetail.isAdmin){
+				this.router.navigate(['/admin'])
+			} else {
+				this.router.navigate(['/login'])
+			}
+	  }
 
 	createFormGroup() {
 		this.loginform = new FormGroup({

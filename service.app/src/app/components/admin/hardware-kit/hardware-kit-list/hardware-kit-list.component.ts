@@ -46,10 +46,10 @@ export class HardwareListComponent implements OnInit {
 	}
 
 	clickAdd() {
-		this.router.navigate(['admin/hardwarekit/add']);
+		this.router.navigate(['admin/hardwarekits/add']);
 	}
 	clickBulk(){
-		this.router.navigate(['admin/bulkupload']);
+		this.router.navigate(['admin/hardwarekits/bulkupload']);
 	}
 	setOrder(sort: any) {
 		if (!sort.active || sort.direction === '') {

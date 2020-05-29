@@ -67,7 +67,7 @@ export class UserAdminListComponent implements OnInit {
    * Redirection to Add user page
    * */
   clickAdd() {
-    this.router.navigate(['admin/user/add']);
+    this.router.navigate(['admin/users/add']);
   }
 
   /**

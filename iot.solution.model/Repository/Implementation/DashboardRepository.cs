@@ -11,6 +11,7 @@ using iot.solution.data;
 using System.Data.Common;
 using System.Data;
 using component.helper;
+using System.Linq;
 
 namespace iot.solution.model.Repository.Implementation
 {
@@ -24,7 +25,7 @@ namespace iot.solution.model.Repository.Implementation
         }
         public List<Entity.DashboardOverviewResponse> GetStatistics()
         {
-            List<Entity.DashboardOverviewResponse> result = new List<Entity.DashboardOverviewResponse>();
+           List<Entity.DashboardOverviewResponse> result = new List<Entity.DashboardOverviewResponse>();
             try
             {
                 _logger.InfoLog(LogHandler.Constants.ACTION_ENTRY, null, "", "", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
@@ -32,9 +33,11 @@ namespace iot.solution.model.Repository.Implementation
                 {
                     List<DbParameter> parameters = sqlDataAccess.CreateParams(SolutionConfiguration.CurrentUserId, SolutionConfiguration.Version);
                     parameters.Add(sqlDataAccess.CreateParameter("guid", SolutionConfiguration.CompanyId, DbType.Guid, ParameterDirection.Input));
+                  
                     DbDataReader dbDataReader = sqlDataAccess.ExecuteReader(sqlDataAccess.CreateCommand("[CompanyStatistics_Get]", CommandType.StoredProcedure, null), parameters.ToArray());
                     // DataUtils.DataReaderToObject(dbDataReader, result);
                     result = DataUtils.DataReaderToList<Entity.DashboardOverviewResponse>(dbDataReader, null);
+                    
                 }
                 _logger.InfoLog(LogHandler.Constants.ACTION_EXIT, null, "", "", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
             }

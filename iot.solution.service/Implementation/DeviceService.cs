@@ -326,32 +326,27 @@ namespace iot.solution.service.Implementation
                 return new Entity.SearchResult<List<Entity.Device>>();
             }
         }
-        public Response.DeviceDetailResponse GetDeviceDetail(Guid deviceId)
+        public Entity.BaseResponse<Response.DeviceDetailResponse> GetDeviceDetail(Guid deviceId)
         {
-            Response.DeviceDetailResponse result = new Response.DeviceDetailResponse();
+            Entity.BaseResponse<List<Response.DeviceDetailResponse>> listResult = new Entity.BaseResponse<List<Response.DeviceDetailResponse>>();
+            Entity.BaseResponse<Response.DeviceDetailResponse> result = new Entity.BaseResponse<Response.DeviceDetailResponse>(true);
             try
             {
-                result = new Response.DeviceDetailResponse()
+                listResult = _deviceRepository.GetStatistics(deviceId);
+                if (listResult.Data.Count > 0)
                 {
-                    EnergyUsage = 2700,
-                    Temperature = 73,
-                    Moisture = 15,
-                    Humidity = 62,
-                    WaterUsage = 3800,
-                    TotalDevices = ChildDeviceList(new Entity.SearchRequest()
-                    {
-                        Guid = deviceId.ToString(),
-                        PageNumber = -1,
-                        PageSize = -1,
-                        OrderBy = ""
-                    }).Items.Count()
-                };
+                    result.IsSuccess = true;
+                    result.Data = listResult.Data[0];
+                    result.LastSyncDate = listResult.LastSyncDate;
+                }
+
             }
             catch (Exception ex)
             {
                 _logger.ErrorLog(ex, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
             }
             return result;
+
         }
         public List<Response.GreenHouseDevicesResponse> GetGreenHouseDevices(Guid greenhouseId)
         {
@@ -539,6 +534,63 @@ namespace iot.solution.service.Implementation
             {
                 _logger.ErrorLog(ex, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
                 return new Entity.BaseResponse<Entity.DeviceCounterResult>(false, ex.Message);
+            }
+            return result;
+        }
+        public Entity.BaseResponse<List<Entity.DeviceTelemetryDataResult>> GetTelemetryData(Guid deviceId)
+        {
+            Entity.BaseResponse<List<Entity.DeviceTelemetryDataResult>> result = new Entity.BaseResponse<List<Entity.DeviceTelemetryDataResult>>(true);
+            try
+            {
+                var childDevices = _deviceRepository.FindBy(x => x.ParentDeviceGuid.Value.Equals(deviceId) && !x.IsDeleted).ToList();
+
+                if (childDevices != null && childDevices.Count > 0)
+                {
+                    result.Data = new List<DeviceTelemetryDataResult>();
+                    foreach (var device in childDevices)
+                    {
+                        IOT.DataResponse<List<IOT.DeviceTelemetryData>> deviceCounterResult = _iotConnectClient.Device.GetTelemetryData(device.Guid.ToString()).Result;
+                        if (deviceCounterResult != null && deviceCounterResult.status)
+                        {
+                            result.Data.AddRange(deviceCounterResult.data.Select(d => Mapper.Configuration.Mapper.Map<Entity.DeviceTelemetryDataResult>(d)).ToList());
+                        }
+                    }
+                }
+                else
+                {
+                   result.Data = null;
+                   result.Message = "No Child Device Found!";
+                   result.IsSuccess = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+                return new Entity.BaseResponse<List<Entity.DeviceTelemetryDataResult>>(false, ex.Message);
+            }
+            return result;
+        }
+        public Entity.BaseResponse<Entity.DeviceConnectionStatusResult> GetConnectionStatus(string uniqueId)
+        {
+            Entity.BaseResponse<Entity.DeviceConnectionStatusResult> result = new Entity.BaseResponse<Entity.DeviceConnectionStatusResult>(true);
+            try
+            {
+                IOT.DataResponse<List<IOT.DeviceConnectionStatus>> deviceConnectionStatus = _iotConnectClient.Device.GetConnectionStatus(uniqueId).Result;
+                if (deviceConnectionStatus != null && deviceConnectionStatus.status && deviceConnectionStatus.data != null)
+                {
+                    result.Data = Mapper.Configuration.Mapper.Map<Entity.DeviceConnectionStatusResult>(deviceConnectionStatus.data.FirstOrDefault());
+                }
+                else
+                {
+                    result.Data = null;
+                    result.IsSuccess = false;
+                    result.Message = new UtilityHelper().IOTResultMessage(deviceConnectionStatus.errorMessages);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+                return new Entity.BaseResponse<Entity.DeviceConnectionStatusResult>(false, ex.Message);
             }
             return result;
         }

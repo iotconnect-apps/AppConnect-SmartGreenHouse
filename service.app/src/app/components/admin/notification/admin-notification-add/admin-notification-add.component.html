@@ -189,7 +189,7 @@
                             <fieldset class="form-group form-field mb-0">
                                 <label class="form-label">Description<b>*</b></label>
                                 <mat-form-field>
-                                    <textarea formControlName="description" placeholder="Description" rows="3"
+                                    <textarea maxlength="90" formControlName="description" placeholder="Description" rows="3"
                                         class="form-control" matInput></textarea>
                                     <div class="form-control-feedback" *ngIf="postForm.controls['description'].errors">
                                         <p class="form-tooltip-error sm " [ngClass]="{'error':true}"

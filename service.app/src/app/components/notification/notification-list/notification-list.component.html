@@ -7,12 +7,12 @@
 <div class="content p-t-0">
     <mat-card class="plan-card mb-3 mat-card">
         <div class="row">
-            <div *ngIf="adminNotificationList.length" class="col col-ld-12">
+            <div *ngIf="adminNotificationList.length" class="col col-12">
                 <div class="row">
                     <div *ngFor="let adminNotification of adminNotificationList;let i = index;"
-                        class="col-md-3 mb-2 user-actions p-3 border">
+                        class="col-md-4 mb-2 user-actions p-3 border">
                         <div class="d-flex align-items-center justify-content-between">
-                            <label class="form-label mb-0 mr-3">{{adminNotification.name}}</label>
+                            <label class="form-label mb-0 mr-3 notifiction-title">{{adminNotification.name}}</label>
                             <mat-slide-toggle (change)="selectRule(i,adminNotification)"
                                 [checked]="adminNotification['selected']">
                             </mat-slide-toggle>
@@ -121,6 +121,13 @@
                                             <mat-option value="{{role['value']}}" *ngFor="let role of roleList">
                                                 {{role['text']}}</mat-option>
                                         </mat-select>
+                                        <div class="form-control-feedback"
+                                           *ngIf="postForm.controls['roles'].errors">
+                                        <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                                           *ngIf="postForm.controls['roles'].errors.required && checkSubmitStatus">
+                                          Please select Role
+                                        </p>
+                                      </div>
                                     </mat-form-field>
                                 </fieldset>
                             </div>
@@ -133,6 +140,13 @@
                                             <mat-option value="{{user['value']}}" *ngFor="let user of userList">
                                                 {{user['text']}}</mat-option>
                                         </mat-select>
+                                         <div class="form-control-feedback"
+                                           *ngIf="postForm.controls['users'].errors">
+                                        <p class="form-tooltip-error sm" [ngClass]="{'error':true}"
+                                           *ngIf="postForm.controls['users'].errors.required && checkSubmitStatus">
+                                          Please select User
+                                        </p>
+                                      </div>
                                     </mat-form-field>
                                 </fieldset>
                             </div>

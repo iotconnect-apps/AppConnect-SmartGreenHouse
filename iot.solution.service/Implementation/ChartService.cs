@@ -9,6 +9,8 @@ using System.Reflection;
 using LogHandler = component.services.loghandler;
 using Request = iot.solution.entity.Request;
 using Response = iot.solution.entity.Response;
+using Entity = iot.solution.entity;
+using System.Linq;
 
 namespace iot.solution.service.Implementation
 {
@@ -22,10 +24,54 @@ namespace iot.solution.service.Implementation
             _greenHouseRepository = greenHouseRepository;
             _logger = logger;
         }
-
-        public List<Response.EnergyUsageResponse> GetEnergyUsage(Request.ChartRequest request)
+        public Entity.ActionStatus TelemetrySummary_DayWise()
         {
-            List<Response.EnergyUsageResponse> result = new List<Response.EnergyUsageResponse>();
+            Entity.ActionStatus actionStatus = new Entity.ActionStatus(true);
+            try
+            {
+                _logger.InfoLog(LogHandler.Constants.ACTION_ENTRY, null, "", "", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+                using (var sqlDataAccess = new SqlDataAccess(ConnectionString))
+                {
+                    List<DbParameter> parameters = new List<DbParameter>();
+                   sqlDataAccess.ExecuteNonQuery(sqlDataAccess.CreateCommand("[TelemetrySummary_DayWise_Add]", CommandType.StoredProcedure, null), parameters.ToArray());                  
+                }
+                _logger.InfoLog(LogHandler.Constants.ACTION_EXIT, null, "", "", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+                actionStatus.Success = false;
+                actionStatus.Message = ex.Message;
+            }
+            return actionStatus;
+        }
+        public Entity.ActionStatus TelemetrySummary_HourWise()
+        {
+            Entity.ActionStatus actionStatus = new Entity.ActionStatus(true);
+            try
+            {
+                _logger.InfoLog(LogHandler.Constants.ACTION_ENTRY, null, "", "", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+                using (var sqlDataAccess = new SqlDataAccess(ConnectionString))
+                {
+                    List<DbParameter> parameters = new List<DbParameter>();
+                    sqlDataAccess.ExecuteNonQuery(sqlDataAccess.CreateCommand("[TelemetrySummary_HourWise_Add]", CommandType.StoredProcedure, null), parameters.ToArray());
+                }
+                _logger.InfoLog(LogHandler.Constants.ACTION_EXIT, null, "", "", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex, this.GetType().Name, MethodBase.GetCurrentMethod().Name);
+                actionStatus.Success = false;
+                actionStatus.Message = ex.Message;
+            }
+            return actionStatus;
+        }
+        public Entity.BaseResponse<List<Response.EnergyUsageResponse>> GetEnergyUsage(Request.ChartRequest request)
+        {
+            
+            Entity.BaseResponse<List<Response.EnergyUsageResponse>> result = new Entity.BaseResponse<List<Response.EnergyUsageResponse>>(true);
             try
             {
                 _logger.InfoLog(LogHandler.Constants.ACTION_ENTRY, null, "", "", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
@@ -36,8 +82,13 @@ namespace iot.solution.service.Implementation
                     parameters.Add(sqlDataAccess.CreateParameter("entityguid", request.GreenHouseGuid, DbType.Guid, ParameterDirection.Input));
                     parameters.Add(sqlDataAccess.CreateParameter("guid", request.HardwareKitGuid, DbType.Guid, ParameterDirection.Input));
                     parameters.Add(sqlDataAccess.CreateParameter("enableDebugInfo", component.helper.SolutionConfiguration.EnableDebugInfo, DbType.String, ParameterDirection.Input));
+                    parameters.Add(sqlDataAccess.CreateParameter("syncDate", DateTime.UtcNow, DbType.DateTime, ParameterDirection.Output));
                     DbDataReader dbDataReader = sqlDataAccess.ExecuteReader(sqlDataAccess.CreateCommand("[Chart_CurrentConsumption]", CommandType.StoredProcedure, null), parameters.ToArray());
-                    result = DataUtils.DataReaderToList<Response.EnergyUsageResponse>(dbDataReader, null);
+                    result.Data = DataUtils.DataReaderToList<Response.EnergyUsageResponse>(dbDataReader, null);
+                    if (parameters.Where(p => p.ParameterName.Equals("syncDate")).FirstOrDefault()!=null)
+                    {
+                        result.LastSyncDate = Convert.ToString(parameters.Where(p => p.ParameterName.Equals("syncDate")).FirstOrDefault().Value);
+                    }
                 }
                 _logger.InfoLog(LogHandler.Constants.ACTION_EXIT, null, "", "", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
             }
@@ -47,10 +98,9 @@ namespace iot.solution.service.Implementation
             }
             return result;
         }
-
-        public List<Response.SoilNutritionResponse> GetSoilNutrition(Request.ChartRequest request)
+        public Entity.BaseResponse<List<Response.SoilNutritionResponse>> GetSoilNutrition(Request.ChartRequest request)
         {
-            List<Response.SoilNutritionResponse> result = new List<Response.SoilNutritionResponse>();
+            Entity.BaseResponse<List<Response.SoilNutritionResponse>> result = new Entity.BaseResponse<List<Response.SoilNutritionResponse>>(true);
             try
             {
                 _logger.InfoLog(LogHandler.Constants.ACTION_ENTRY, null, "", "", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
@@ -61,8 +111,13 @@ namespace iot.solution.service.Implementation
                     parameters.Add(sqlDataAccess.CreateParameter("entityguid", request.GreenHouseGuid, DbType.Guid, ParameterDirection.Input));
                     parameters.Add(sqlDataAccess.CreateParameter("guid", request.HardwareKitGuid, DbType.Guid, ParameterDirection.Input));
                     parameters.Add(sqlDataAccess.CreateParameter("enableDebugInfo", component.helper.SolutionConfiguration.EnableDebugInfo, DbType.String, ParameterDirection.Input));
+                    parameters.Add(sqlDataAccess.CreateParameter("syncDate", DateTime.UtcNow, DbType.DateTime, ParameterDirection.Output));
                     DbDataReader dbDataReader = sqlDataAccess.ExecuteReader(sqlDataAccess.CreateCommand("[Chart_SoilNutrition]", CommandType.StoredProcedure, null), parameters.ToArray());
-                    result = DataUtils.DataReaderToList<Response.SoilNutritionResponse>(dbDataReader, null);
+                    result.Data = DataUtils.DataReaderToList<Response.SoilNutritionResponse>(dbDataReader, null);
+                    if (parameters.Where(p => p.ParameterName.Equals("syncDate")).FirstOrDefault() != null)
+                    {
+                        result.LastSyncDate = Convert.ToString(parameters.Where(p => p.ParameterName.Equals("syncDate")).FirstOrDefault().Value);
+                    }
                 }
                 _logger.InfoLog(LogHandler.Constants.ACTION_EXIT, null, "", "", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
             }
@@ -72,10 +127,9 @@ namespace iot.solution.service.Implementation
             }
             return result;
         }
-
-        public List<Response.WaterUsageResponse> GetWaterUsage(Request.ChartRequest request)
+        public Entity.BaseResponse<List<Response.WaterUsageResponse>> GetWaterUsage(Request.ChartRequest request)
         {
-            List<Response.WaterUsageResponse> result = new List<Response.WaterUsageResponse>();
+            Entity.BaseResponse<List<Response.WaterUsageResponse>> result = new Entity.BaseResponse<List<Response.WaterUsageResponse>>(true);
             try
             {
                 _logger.InfoLog(LogHandler.Constants.ACTION_ENTRY, null, "", "", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
@@ -86,8 +140,13 @@ namespace iot.solution.service.Implementation
                     parameters.Add(sqlDataAccess.CreateParameter("entityguid", request.GreenHouseGuid, DbType.Guid, ParameterDirection.Input));
                     parameters.Add(sqlDataAccess.CreateParameter("guid", request.HardwareKitGuid, DbType.Guid, ParameterDirection.Input));
                     parameters.Add(sqlDataAccess.CreateParameter("enableDebugInfo", component.helper.SolutionConfiguration.EnableDebugInfo, DbType.String, ParameterDirection.Input));
+                    parameters.Add(sqlDataAccess.CreateParameter("syncDate", DateTime.UtcNow, DbType.DateTime, ParameterDirection.Output));
                     DbDataReader dbDataReader = sqlDataAccess.ExecuteReader(sqlDataAccess.CreateCommand("[Chart_WaterConsumption]", CommandType.StoredProcedure, null), parameters.ToArray());
-                    result = DataUtils.DataReaderToList<Response.WaterUsageResponse>(dbDataReader, null);
+                    result.Data = DataUtils.DataReaderToList<Response.WaterUsageResponse>(dbDataReader, null);
+                    if (parameters.Where(p => p.ParameterName.Equals("syncDate")).FirstOrDefault() != null)
+                    {
+                        result.LastSyncDate = Convert.ToString(parameters.Where(p => p.ParameterName.Equals("syncDate")).FirstOrDefault().Value);
+                    }
                 }
                 _logger.InfoLog(LogHandler.Constants.ACTION_EXIT, null, "", "", this.GetType().Name, MethodBase.GetCurrentMethod().Name);
             }

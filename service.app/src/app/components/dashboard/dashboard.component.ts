@@ -20,8 +20,8 @@ export class DashboardComponent implements OnInit {
 		columns: this.columnArray,
 		type: 'NumberFormat'
 	};
-	bgColor = '#fff';
-	chartHeight = 300;
+	bgColor = ['#5496d0'];
+	chartHeight = 350;
 	chartWidth = '100%';
 	chart = {
 		'waterConsumption': {
@@ -30,13 +30,19 @@ export class DashboardComponent implements OnInit {
 			options: {
 				height: this.chartHeight,
 				width: this.chartWidth,
+				legend: { position: 'none' },
 				interpolateNulls: true,
 				backgroundColor: this.bgColor,
+				colors:this.bgColor,
 				hAxis: {
 					title: 'Date/Time',
 					gridlines: {
-						count: 5
+						count: 12
 					},
+					maxAlternation: 1, // use a maximum of 1 line of labels
+					showTextEvery: 1, // show every label if possible
+					minTextSpacing: 8 // minimum spacing between adjacent labels, in pixels
+					
 				},
 				vAxis: {
 					title: 'Values',
@@ -54,7 +60,9 @@ export class DashboardComponent implements OnInit {
 				height: this.chartHeight,
 				width: this.chartWidth,
 				interpolateNulls: true,
+				legend: { position: 'none' },
 				backgroundColor: this.bgColor,
+				colors:this.bgColor,
 				hAxis: {
 					title: 'Date/Time',
 					gridlines: {
@@ -78,6 +86,7 @@ export class DashboardComponent implements OnInit {
 				width: this.chartWidth,
 				interpolateNulls: true,
 				backgroundColor: this.bgColor,
+				colors:'red',
 				hAxis: {
 					title: 'Date/Time',
 					gridlines: {
@@ -94,6 +103,7 @@ export class DashboardComponent implements OnInit {
 			formatters: this.headFormate
 		}
 	};
+	fieldcolor:any;
 	isShowLeftMenu = true;
 	totalGreenhouse: any;
 	totalCorp: any;
@@ -102,12 +112,14 @@ export class DashboardComponent implements OnInit {
 	totalAlerts: any;
 	greenhouse = [];
 	alerts: any = [];
-	energyUsage: any;
-	humidity: any;
-	moisture: any;
-	temperature: any;
-	totalDevices: any;
-	waterUsage: any;
+	stats = {
+		energyUsage: 0,
+		humidity: 0,
+		moisture: 0,
+		temperature: 0,
+		totalDevices: 0,
+		waterUsage: 0
+	}
 	currentUser = JSON.parse(localStorage.getItem("currentUser"));
 	selectedGreenhouseId = '';
 	constructor(
@@ -133,10 +145,10 @@ export class DashboardComponent implements OnInit {
 			sortBy: 'eventDate desc',
 			deviceGuid: '',
 			entityGuid: '',
-		  };
+		};
 		this.spinner.show();
 		this.dashboardService.getAlertsList(searchParameters).subscribe(response => {
-			this.spinner.hide();
+			//this.spinner.hide();
 			if (response.isSuccess === true && response.data.items) {
 				this.alerts = response.data.items;
 			}
@@ -158,13 +170,13 @@ export class DashboardComponent implements OnInit {
 		let obj = { companyGuid: this.currentUser.userDetail.companyId };
 		let data = [];
 		this.dashboardService.getWaterUsageChartData(obj).subscribe(response => {
-			this.spinner.hide();
+			//this.spinner.hide();
 			if (response.isSuccess === true) {
 				if (response.data.length) {
 					data.push(['Months', 'Water Consumption']);
 				}
 				response.data.forEach(element => {
-					data.push([element.month, parseInt(element.value)]);
+					data.push([element.month, parseFloat(element.value)]);
 				});
 				this.createChart('waterConsumption', data, 'Months', 'gal');
 			}
@@ -183,13 +195,13 @@ export class DashboardComponent implements OnInit {
 		let obj = { companyGuid: this.currentUser.userDetail.companyId };
 		let data = []
 		this.dashboardService.getEnergyUsageChartData(obj).subscribe(response => {
-			this.spinner.hide();
+			//this.spinner.hide();
 			if (response.isSuccess === true) {
 				if (response.data.length) {
-					data.push(['Months', 'Energy']);
+					data.push(['Months', '']);
 				}
 				response.data.forEach(element => {
-					data.push([element.month, parseInt(element.value)]);
+					data.push([element.month, parseFloat(element.value)]);
 				});
 				this.createChart('energyConsumption', data, 'Months', 'KWH');
 			}
@@ -208,15 +220,15 @@ export class DashboardComponent implements OnInit {
 		let obj = { companyGuid: this.currentUser.userDetail.companyId };
 		let data = []
 		this.dashboardService.getSoilnutritionChartData(obj).subscribe(response => {
-			this.spinner.hide();
+			//this.spinner.hide();
 			if (response.isSuccess === true) {
 				if (response.data.length) {
 					data.push(['pH Level', 'N', 'P', 'K']);
 				}
 				response.data.forEach(element => {
-					data.push([element.phLevel, parseInt(element['n']), parseInt(element['p']), parseInt(element['k'])]);
+					data.push([element.day, parseFloat(element['n']), parseFloat(element['p']), parseFloat(element['k'])]);
 				});
-				this.createChart('soilNutritions', data, 'pH Level', '% Availability');
+				this.createChart('soilNutritions', data, 'Days', '% pH Level');
 			}
 			else {
 				this._notificationService.add(new Notification('error', response.message));
@@ -229,6 +241,29 @@ export class DashboardComponent implements OnInit {
 
 	}
 	createChart(key, data, hAxisTitle, vAxisTitle) {
+		let legend = { position: 'none' };
+		var hAxis={};
+		if (key === 'soilNutritions') {
+			legend = { position: 'right' };
+			hAxis={
+				title: hAxisTitle,
+				gridlines: {
+					count: 5
+				},
+				// slantedText:true,
+				// slantedTextAngle:45,
+			}
+		} else {
+			hAxis={
+				title: hAxisTitle,
+				gridlines: {
+					count: 5
+				},
+				slantedText:true,
+				slantedTextAngle:45,
+			}
+		}
+		if (key === 'energyConsumption') {
 		this.chart[key] = {
 			chartType: 'ColumnChart',
 			dataTable: data,
@@ -236,28 +271,41 @@ export class DashboardComponent implements OnInit {
 				height: this.chartHeight,
 				width: this.chartWidth,
 				interpolateNulls: true,
+				legend: legend,
 				backgroundColor: this.bgColor,
-				hAxis: {
-					title: hAxisTitle,
-					gridlines: {
-						count: 5
-					},
-				},
+				colors: ['#ed734c'],
+				hAxis: hAxis,
 				vAxis: {
 					title: vAxisTitle,
-					gridlines: {
-						count: 1
-					},
 				}
 			},
 			formatters: this.headFormate
 		};
+		}else{
+		this.chart[key] = {
+			chartType: 'ColumnChart',
+			dataTable: data,
+			options: {
+				height: this.chartHeight,
+				width: this.chartWidth,
+				interpolateNulls: true,
+				legend: legend,
+				backgroundColor: this.bgColor,
+				hAxis: hAxis,
+				vAxis: {
+					title: vAxisTitle,
+				}
+			},
+			formatters: this.headFormate
+		};
+		}
+		
 	}
 
 	getDashbourdCount() {
 		this.spinner.show();
 		this.dashboardService.getDashboardoverview().subscribe(response => {
-			this.spinner.hide();
+			//this.spinner.hide();
 			if (response.isSuccess === true) {
 				this.totalGreenhouse = response.data.greenHouseCount
 				this.totalCorp = response.data.cropCount
@@ -278,12 +326,14 @@ export class DashboardComponent implements OnInit {
 	getGreenhouse() {
 		this.spinner.show();
 		this.dashboardService.getActiveGreenHouse().subscribe(response => {
-			this.spinner.hide();
+			//this.spinner.hide();
 			if (response.isSuccess === true) {
 				this.greenhouse = response.data;
 				if (this.greenhouse.length > 0) {
 					this.selectedGreenhouseId = this.greenhouse[0]['guid'];
 					this.getgreenHouse(this.greenhouse[0]['guid']);
+				} else {
+					this.spinner.hide();
 				}
 			}
 			else {
@@ -296,17 +346,27 @@ export class DashboardComponent implements OnInit {
 		});
 	}
 
+	getLocalDate(lDate) {
+		var utcDate = moment.utc(lDate, 'YYYY-MM-DDTHH:mm:ss.SSS');
+		// Get the local version of that date
+		var localDate = moment(utcDate).local();
+		let res = moment(localDate).format('MMM DD, YYYY hh:mm:ss A');
+		return res;
+
+	}
+
+
 	getgreenHouse(greenhouseguid) {
 		this.spinner.show();
 		this.dashboardService.getGreenHouseDetail(greenhouseguid).subscribe(response => {
 			this.spinner.hide();
 			if (response.isSuccess === true) {
-				this.energyUsage = response.data.energyUsage
-				this.humidity = response.data.humidity
-				this.moisture = response.data.moisture
-				this.temperature = response.data.temperature
-				this.totalDevices = response.data.totalDevices
-				this.waterUsage = response.data.waterUsage
+				this.stats.energyUsage = (response.data.totalEnergyCount) ? response.data.totalEnergyCount : 0;
+				this.stats.humidity = (response.data.avgHumidity) ? response.data.avgHumidity : 0;
+				this.stats.moisture = (response.data.avgMoisture) ? response.data.avgMoisture : 0;
+				this.stats.temperature = (response.data.avgTemp) ? response.data.avgTemp : 0;
+				this.stats.totalDevices = (response.data.totalDevice) ? response.data.totalDevice : 0;
+				this.stats.waterUsage = (response.data.totalWaterUsage) ? response.data.totalWaterUsage : 0;
 			}
 			else {
 				this._notificationService.add(new Notification('error', response.message));
