@@ -69,7 +69,7 @@
 		"googleapis": "^32.0.0",
 		"guid-typescript": "^1.0.9",
 		"hammerjs": "^2.0.8",
-		"handlebars": "^4.4.2",
+		"handlebars": "^4.5.3",
 		"ical-generator": "^0.2.10",
 		"ical-toolkit": "^1.0.9",
 		"jimp": "^0.2.28",
