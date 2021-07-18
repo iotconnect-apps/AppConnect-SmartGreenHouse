@@ -73,7 +73,7 @@
 		"ical-generator": "^0.2.10",
 		"ical-toolkit": "^1.0.9",
 		"jimp": "^0.2.28",
-		"jquery": "^3.4.1",
+		"jquery": "^3.5.0",
 		"js-marker-clusterer": "^1.0.0",
 		"jsonwebtoken": "^8.5.1",
 		"jwt-simple": "^0.5.1",
