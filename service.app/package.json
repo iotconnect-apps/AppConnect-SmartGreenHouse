@@ -75,7 +75,7 @@
 		"jimp": "^0.2.28",
 		"jquery": "^3.4.1",
 		"js-marker-clusterer": "^1.0.0",
-		"jsonwebtoken": "^8.5.1",
+		"jsonwebtoken": "^9.0.0",
 		"jwt-simple": "^0.5.1",
 		"localStorage": "^1.0.3",
 		"moment": "^2.18.1",
